@@ -1,4 +1,4 @@
-# SightReaderPro
-RPI SDD SightReader Pro
+# SightReader Pro
+
 Created by:
-  Chandler Dawson
+* Chandler Dawson
