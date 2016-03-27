@@ -1,7 +1,10 @@
 package com.example.xerxes.cameratest;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +19,7 @@ import android.widget.ImageView;
 public class MainActivity extends AppCompatActivity {
 
     public static final int CAMERA_REQUEST = 10;
+    public static final int PICKER_REQUEST = 11;
     private ImageView photoView;
 
     @Override
@@ -55,6 +59,12 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(cameraIntent, CAMERA_REQUEST);
     }
 
+    public void btnSelectPhoto(View v) {
+        Intent selectIntent = new Intent (Intent.ACTION_PICK);
+        selectIntent.setType("image/*");
+        startActivityForResult(selectIntent, PICKER_REQUEST);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -62,6 +72,19 @@ public class MainActivity extends AppCompatActivity {
             if (requestCode == CAMERA_REQUEST) {
                 Bitmap cameraImage = (Bitmap)data.getExtras().get("data");
                 photoView.setImageBitmap(cameraImage);
+            }
+            if (requestCode == PICKER_REQUEST) {
+                Uri pickerImage = data.getData();
+                String[] filePath = { MediaStore.Images.Media.DATA };
+                Cursor cursor = getContentResolver().query(pickerImage, filePath, null, null, null);
+                cursor.moveToFirst();
+                String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
+
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+                photoView.setImageBitmap(bitmap);
+                cursor.close();
             }
         }
     }
