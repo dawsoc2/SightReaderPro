@@ -54,25 +54,34 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //Function for the "take photo" button.
     public void btnTakePhoto(View v) {
+        //Intent to take a photo with the camera
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //actually take the photo
         startActivityForResult(cameraIntent, CAMERA_REQUEST);
     }
 
+    //Function for the "Pick Photo" button
     public void btnSelectPhoto(View v) {
+        //intent to "pick" something
         Intent selectIntent = new Intent (Intent.ACTION_PICK);
+        //we're picking an image.
         selectIntent.setType("image/*");
         startActivityForResult(selectIntent, PICKER_REQUEST);
     }
 
     @Override
+    //override "onActivityRequest" to do something special with the "startActivity"
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
+            //"take photo". Gets a bitmap directly from the camera.
             if (requestCode == CAMERA_REQUEST) {
                 Bitmap cameraImage = (Bitmap)data.getExtras().get("data");
                 photoView.setImageBitmap(cameraImage);
             }
+            //"pick photo" Gets a file path that we have to extract a bitmap from.
             if (requestCode == PICKER_REQUEST) {
                 Uri pickerImage = data.getData();
                 String[] filePath = { MediaStore.Images.Media.DATA };
