@@ -5,4 +5,3 @@ Created by:
 * Nicholas Brennan
 * Alex Vargas
 * Alexander McDonald
-
