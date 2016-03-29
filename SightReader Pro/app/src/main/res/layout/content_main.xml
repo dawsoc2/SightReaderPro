@@ -12,18 +12,6 @@
     tools:context="com.example.xerxes.cameratest.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Take Photo"
-        android:id="@+id/photoButton"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="btnTakePhoto" />
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,18 +20,42 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/photoButton"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/pickerButton" />
 
-    <Button
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pick Photo"
-        android:id="@+id/pickerButton"
-        android:layout_below="@+id/photoButton"
-        android:layout_alignRight="@+id/photoButton"
-        android:layout_alignEnd="@+id/photoButton"
+        android:id="@+id/iconImageView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="btnSelectPhoto" />
+        android:longClickable="false"
+        android:src="@drawable/ic_launcher"
+        android:layout_centerVertical="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/photoButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="btnTakePhoto"
+        android:src="@drawable/camera_icon"
+        android:layout_above="@+id/photoImageView"
+        android:layout_below="@+id/iconImageView"
+        android:layout_toStartOf="@+id/pickerButton"
+        android:scaleType="fitCenter" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/pickerButton"
+        android:layout_below="@+id/iconImageView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="btnSelectPhoto"
+        android:src="@drawable/gallery_icon" />
 </RelativeLayout>
