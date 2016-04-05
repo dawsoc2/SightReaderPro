@@ -1,5 +1,6 @@
 package com.example.xerxes.cameratest;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -15,6 +16,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+
+import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -71,15 +74,20 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(selectIntent, PICKER_REQUEST);
     }
 
+
     @Override
     //override "onActivityRequest" to do something special with the "startActivity"
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Intent toPropertiesPage = new Intent(MainActivity.this, PropertiesPage.class);
         if (resultCode == RESULT_OK) {
             //"take photo". Gets a bitmap directly from the camera.
             if (requestCode == CAMERA_REQUEST) {
                 Bitmap cameraImage = (Bitmap)data.getExtras().get("data");
-                photoView.setImageBitmap(cameraImage);
+                Uri tempUri = getImageUri(getApplicationContext(), cameraImage);
+                String imagePath = getRealPathFromURI(tempUri);
+                toPropertiesPage.putExtra("imagePath", imagePath);
+                startActivity(toPropertiesPage);
             }
             //"pick photo" Gets a file path that we have to extract a bitmap from.
             if (requestCode == PICKER_REQUEST) {
@@ -88,13 +96,23 @@ public class MainActivity extends AppCompatActivity {
                 Cursor cursor = getContentResolver().query(pickerImage, filePath, null, null, null);
                 cursor.moveToFirst();
                 String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
-
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
-                photoView.setImageBitmap(bitmap);
-                cursor.close();
+                toPropertiesPage.putExtra("imagePath", imagePath);
+                startActivity(toPropertiesPage);
             }
         }
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
     }
 }
