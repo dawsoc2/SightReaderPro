@@ -4,10 +4,8 @@ class Note {
 	
 	private int staff_position;
 	private char note_type;
-	private char modifier;
-	private char clef;
 	
-	public Note(String note_properties, char new_modifier, char new_clef) {
+	public Note(String note_properties) {
 		note_type = note_properties.charAt(0);
 		String temp_position = note_properties.substring(1);
 		if (temp_position.equals("R")){
@@ -15,20 +13,33 @@ class Note {
 		}else{
 			staff_position = Integer.parseInt(temp_position);
 		}
-		
-		modifier = new_modifier;
-		clef = new_clef;
 	}
 	
-	public void change_clef(char new_clef) {
-		clef = new_clef;
+	private int staff_to_value(char clef)	{
+		if (clef == 'T') {
+			int[] tclef =  {24,26,28,29,31,33,35,
+					36,38,40,41,43,45,47,
+					48,50,52,53,55,57,59,
+					60,62,64,65,67,69,71,
+					72,74,76,77,79,81,83,
+					84,86,88,89,91,93,95,
+					96,98,100,101,103,105,107};
+			return tclef[staff_position + 21];
+		}
+		else {
+			int[] bclef =  { 4, 5, 7, 9,11,12,14,
+					16,17,19,21,23,24,26,
+					28,29,31,33,35,36,38,
+					40,41,43,45,47,48,50,
+					52,53,55,57,59,60,62,
+					64,65,67,69,71,72,74,
+					76,77,79,81,83,84,86};
+			return bclef[staff_position + 21];
+		}
+		return 0;
 	}
-	
-	public void change_key(char new_modifier) {
-		modifier = new_modifier;
-	}
-	
-	public String get_midi() {
+
+	public String get_midi(char clef) {
 		// The relatively hard part
 		// <v_time> + <midi_event>
 		// v_time = elapsed time since last event (variable size - we'll do 3 bytes)
@@ -42,7 +53,7 @@ class Note {
 		if (staff_position > -20) {						// Note is not a rest
 			note_text += '\u8080';								// 0 time elapsed (first 2 bytes)
 			note_text += '\u0090';								// 0 time elapsed; note ON, channel 1
-			note_text += (char)((staff_position<<8)&0xFF00 + 0x40);	// note num and velocity (use 40)
+			note_text += (char)((staff_to_value(clef)<<8)&0xFF00 + 0x40);	// note num and velocity (use 40)
 		
 			int wait_time = 0;
 			// Add to this list when we add more supported note lengths
@@ -63,7 +74,7 @@ class Note {
 			
 			note_text += (char)(w1<<8 + w2);                        // wait_time elapsed (first 2 bytes)
 			note_text += (char)(w3<<8 + 0x90);                      // wait_time elapsed; note ON, channel 1
-			note_text += (char)((staff_position<<8)&0xFF00 + 0x40);	// note num and velocity (40)
+			note_text += (char)((staff_to_value(clef)<<8)&0xFF00 + 0x40);	// note num and velocity (40)
 		}
 		
 		else {													// Note is a rest
