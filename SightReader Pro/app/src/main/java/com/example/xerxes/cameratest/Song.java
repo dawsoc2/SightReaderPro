@@ -20,7 +20,7 @@ class Song {
 		Note temp;												//to store length of each note temporarily for the song
 		String[] input_data = input.split(" ");	
 		for (int i=0; i< input_data.length; i++){
-			temp = new Note(input_data[i], 'C', clef);			//perhaps key and clef don't need to be included in the notes
+			temp = new Note(input_data[i]);				
 			notes.add(temp);
 		}
     }
@@ -34,20 +34,22 @@ class Song {
 	}
 	
 	
-	String convert_to_midi() {
+	public String convert_to_midi() {
 		String note_text = "";
 		
 		// File Header
 		// Note: Java uses 16 bit unicode chars
 		note_text += "MThd";									// File designation
-		note_text += '\u0000' + '\u0006';						// Length of header
+		note_text += '\u0000';									// Length of header (first 2 bytes)
+		note_text += '\u0006';									// Length of header (second 2 bytes)
 		note_text += '\u0000';									// Format (single track)
 		note_text += '\u0001';									// Number of track chunks (single track)
 		note_text += '\u0060'; 									// Pulses per Quarter note (96 PPQ)
 		
 		note_text += "MTrk";									// Track designation
 		int length = notes.size()*12 + 6;						// On/Off for each note (6B ea) + tempo set (6B)
-		note_text += (char)(length>>>16) + (char)(length&0xFFFF);	// Number of track events (4-byte int to two 2-byte chars)
+		note_text += (char)(length>>>16);						// Num track events (first 2 bytes)
+		note_text += (char)(length&0xFFFF);						// Num track events (second 2 bytes)
 		
 		// First track event is setting tempo
 		note_text += '\uFF51';									// Event type tempo setting
@@ -57,8 +59,11 @@ class Song {
 		
 		// Note track events
 		for (Note note : notes) {
-			note_text += note.get_midi();
+			note_text += note.get_midi(clef);
 		}
+		
+		note_text += '\uFF2F';						// First two bytes of End of Track
+		note_text += '\u0000';						// End of Track
 		
 		return note_text;
 	}
