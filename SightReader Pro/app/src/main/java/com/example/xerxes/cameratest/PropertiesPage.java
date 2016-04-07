@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
@@ -51,6 +52,10 @@ public class PropertiesPage extends AppCompatActivity {
         int instKeySpinnerPosition = instKeySpinnerArrayAdapter.getPosition("C");
         spinnerInst.setSelection(instKeySpinnerPosition);
 
+        //
+        final EditText tempoEditText = (EditText)findViewById(R.id.editTempo);
+        tempoEditText.setText("120");
+
         //create process button that will read data from the spinners
         final Button procButton = (Button) findViewById(R.id.processButton);
         procButton.setOnClickListener(new View.OnClickListener() {
@@ -58,6 +63,7 @@ public class PropertiesPage extends AppCompatActivity {
                 String clefVal = spinnerClef.getSelectedItem().toString();
                 String keyVal = spinnerKeySig.getSelectedItem().toString();
                 String instVal = spinnerInst.getSelectedItem().toString();
+                int tempo = Integer.parseInt(tempoEditText.getText().toString());
             }
         });
 

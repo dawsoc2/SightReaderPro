@@ -98,4 +98,24 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:onClick="btnProc" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Tempo"
+        android:id="@+id/TempoText"
+        android:layout_below="@+id/spinnerKeySignature"
+        android:layout_alignLeft="@+id/spinnerKeySignature"
+        android:layout_alignStart="@+id/spinnerKeySignature" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/editTempo"
+        android:layout_below="@+id/TempoText"
+        android:layout_toRightOf="@+id/spinnerInstrument"
+        android:layout_toEndOf="@+id/spinnerInstrument" />
 </RelativeLayout>
