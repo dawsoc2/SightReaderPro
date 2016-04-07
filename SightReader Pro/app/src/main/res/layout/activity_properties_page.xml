@@ -24,10 +24,65 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/prop_imageView"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_above="@+id/prop_back_btn" />
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Clef"
+        android:id="@+id/textView"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerClef"
+        android:layout_below="@+id/textView"
+        android:layout_toLeftOf="@+id/textView2"
+        android:layout_toStartOf="@+id/textView2" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Key Signature"
+        android:id="@+id/textView2"
+        android:layout_above="@+id/spinnerClef"
+        android:layout_toLeftOf="@+id/prop_back_btn"
+        android:layout_toStartOf="@+id/prop_back_btn" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerKeySignature"
+        android:layout_alignBottom="@+id/spinnerClef"
+        android:layout_toRightOf="@+id/spinnerClef"
+        android:layout_toEndOf="@+id/spinnerClef" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Instrument"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/spinnerClef"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerInstrument"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/spinnerKeySignature"
+        android:layout_toStartOf="@+id/spinnerKeySignature" />
 </RelativeLayout>
