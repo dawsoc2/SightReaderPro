@@ -90,7 +90,7 @@ class Note {
 				System.out.println("ERROR: UNRECOGNIZED REST TYPE!");
 			}
 			
-			// fuck variable size numbers
+			// Implementation of variable sized numbers (using a consistent 3 bytes)
 			char w1 = (char) ((char)((wait_time>>14)&0x7F) | 0x80);
 			char w2 = (char) ((char)((wait_time>>7)&0x7F) | 0x80);
 			char w3 = (char)(wait_time&0x7F);
