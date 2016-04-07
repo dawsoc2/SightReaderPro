@@ -29,6 +29,8 @@ public class PropertiesPage extends AppCompatActivity {
         clefsSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerClef.setAdapter(clefsSpinnerArrayAdapter);
         //spinnerClef.setSelection(getIndex(spinnerClef, "Treble"));
+        int clefSpinnerPosition = clefsSpinnerArrayAdapter.getPosition("Treble");
+        spinnerClef.setSelection(clefSpinnerPosition);
 
         //create key signature spinner
         String keySigArray[] = {"B/C♭", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭/C♯", "G♭/F♯"};
@@ -36,6 +38,8 @@ public class PropertiesPage extends AppCompatActivity {
         ArrayAdapter<String> keySigSpinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, keySigArray);
         keySigSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerKeySig.setAdapter(keySigSpinnerArrayAdapter);
+        int keySigSpinnerPosition = keySigSpinnerArrayAdapter.getPosition("C");
+        spinnerKeySig.setSelection(keySigSpinnerPosition);
 
         //create instrument key spinner
         String instKeyArray[] = {"B/C♭", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭/C♯", "G♭/F♯"};
@@ -43,6 +47,8 @@ public class PropertiesPage extends AppCompatActivity {
         ArrayAdapter<String> instKeySpinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, instKeyArray);
         instKeySpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerInst.setAdapter(instKeySpinnerArrayAdapter);
+        int instKeySpinnerPosition = instKeySpinnerArrayAdapter.getPosition("C");
+        spinnerInst.setSelection(instKeySpinnerPosition);
 
         //dummy intent just to get variables passed
         Intent intent = getIntent();
