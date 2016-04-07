@@ -67,4 +67,8 @@ public class PropertiesPage extends AppCompatActivity {
     public void btnBack(View v) {
         startActivity(new Intent(PropertiesPage.this, MainActivity.class));
     }
+
+    public void btnProc(View v){
+        //add preferences to create midi file
+    }
 }
