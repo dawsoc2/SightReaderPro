@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
@@ -24,7 +25,7 @@ public class PropertiesPage extends AppCompatActivity {
         ImageView photoDisplay = (ImageView)findViewById(R.id.prop_imageView);
         //create clef spinner
         String clefArray[] = {"Treble", "Bass"};
-        Spinner spinnerClef = (Spinner) findViewById(R.id.spinnerClef);
+        final Spinner spinnerClef = (Spinner) findViewById(R.id.spinnerClef);
         ArrayAdapter<String> clefsSpinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, clefArray);
         clefsSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerClef.setAdapter(clefsSpinnerArrayAdapter);
@@ -34,7 +35,7 @@ public class PropertiesPage extends AppCompatActivity {
 
         //create key signature spinner
         String keySigArray[] = {"B/C♭", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭/C♯", "G♭/F♯"};
-        Spinner spinnerKeySig = (Spinner) findViewById(R.id.spinnerKeySignature);
+        final Spinner spinnerKeySig = (Spinner) findViewById(R.id.spinnerKeySignature);
         ArrayAdapter<String> keySigSpinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, keySigArray);
         keySigSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerKeySig.setAdapter(keySigSpinnerArrayAdapter);
@@ -43,12 +44,30 @@ public class PropertiesPage extends AppCompatActivity {
 
         //create instrument key spinner
         String instKeyArray[] = {"B/C♭", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭/C♯", "G♭/F♯"};
-        Spinner spinnerInst = (Spinner) findViewById(R.id.spinnerInstrument);
+        final Spinner spinnerInst = (Spinner) findViewById(R.id.spinnerInstrument);
         ArrayAdapter<String> instKeySpinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, instKeyArray);
         instKeySpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
         spinnerInst.setAdapter(instKeySpinnerArrayAdapter);
         int instKeySpinnerPosition = instKeySpinnerArrayAdapter.getPosition("C");
         spinnerInst.setSelection(instKeySpinnerPosition);
+
+        //create process button that will read data from the spinners
+        final Button procButton = (Button) findViewById(R.id.processButton);
+        procButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String clefVal = spinnerClef.getSelectedItem().toString();
+                String keyVal = spinnerKeySig.getSelectedItem().toString();
+                String instVal = spinnerInst.getSelectedItem().toString();
+            }
+        });
+
+        //creates back button that will take it back to the first page
+        final Button backButton = (Button) findViewById(R.id.prop_back_btn);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(PropertiesPage.this, MainActivity.class));
+            }
+        });
 
         //dummy intent just to get variables passed
         Intent intent = getIntent();
@@ -61,14 +80,5 @@ public class PropertiesPage extends AppCompatActivity {
 
         //display bitmap
         photoDisplay.setImageBitmap(bitmap);
-    }
-
-    //go back to the first page
-    public void btnBack(View v) {
-        startActivity(new Intent(PropertiesPage.this, MainActivity.class));
-    }
-
-    public void btnProc(View v){
-        //add preferences to create midi file
     }
 }
