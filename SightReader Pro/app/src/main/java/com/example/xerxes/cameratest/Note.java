@@ -26,7 +26,7 @@ class Note {
 					96,98,100,101,103,105,107};
 			return tclef[staff_position + 21];
 		}
-		else {
+		if (clef == 'B') {
 			int[] bclef =  { 4, 5, 7, 9,11,12,14,
 					16,17,19,21,23,24,26,
 					28,29,31,33,35,36,38,
@@ -51,9 +51,12 @@ class Note {
 		String note_text = "";
 		
 		if (staff_position > -20) {						// Note is not a rest
-			note_text += '\u8080';								// 0 time elapsed (first 2 bytes)
-			note_text += '\u0090';								// 0 time elapsed; note ON, channel 1
-			note_text += (char)((staff_to_value(clef)<<8)&0xFF00 + 0x40);	// note num and velocity (use 40)
+			note_text += (char)0x80;							// Time elapsed (var size)
+			note_text += (char)0x80;							// Time elapsed (var size)
+			note_text += (char)0x00;							// Time elapsed (var size)
+			note_text += (char)0x90;							// Note ON, channel 1 (value 0)
+			note_text += (char)(staff_to_value(clef)&0xFF);					// Note num
+			note_text += (char)0x40;							// Note velocity
 		
 			int wait_time = 0;
 			// Add to this list when we add more supported note lengths
@@ -67,14 +70,14 @@ class Note {
 				System.out.println("ERROR: UNRECOGNIZED NOTE TYPE!");
 			}
 
-			// fuck variable size numbers
-			char w1 = (char) ((char)((wait_time>>14)&0x7F) | 0x80);
-			char w2 = (char) ((char)((wait_time>>7)&0x7F) | 0x80);
-			char w3 = (char)(wait_time&0x7F);
+			// Implementation of variable sized numbers (using a consistent 3 bytes)
+			note_text += (char) ((char)((wait_time>>14)&0x7F) | 0x80);		// Note length (first byte)
+			note_text += (char) ((char)((wait_time>>7)&0x7F) | 0x80);		// Note length (second byte)
+			note_text += (char)(wait_time&0x7F);					// Note length (third byte)
 			
-			note_text += (char)(w1<<8 + w2);                        // wait_time elapsed (first 2 bytes)
-			note_text += (char)(w3<<8 + 0x90);                      // wait_time elapsed; note ON, channel 1
-			note_text += (char)((staff_to_value(clef)<<8)&0xFF00 + 0x40);	// note num and velocity (40)
+			note_text += (char)0x80;						// Note OFF, channel 1
+			note_text += (char)(staff_to_value(clef)&0xFF);				// Note num
+			note_text += (char)0x40;						// Note velocity
 		}
 		
 		else {													// Note is a rest
@@ -91,17 +94,20 @@ class Note {
 			}
 			
 			// Implementation of variable sized numbers (using a consistent 3 bytes)
-			char w1 = (char) ((char)((wait_time>>14)&0x7F) | 0x80);
-			char w2 = (char) ((char)((wait_time>>7)&0x7F) | 0x80);
-			char w3 = (char)(wait_time&0x7F);
+			note_text += (char) ((char)((wait_time>>14)&0x7F) | 0x80);			// Note length(first byte)
+			note_text += (char) ((char)((wait_time>>7)&0x7F) | 0x80);			// Note length (second byte)
+			note_text += (char)(wait_time&0x7F);						// Note length (third byte)
 			
-			note_text += (char)(w1<<8 + w2);                        // wait_time elapsed (first 2 bytes)
-			note_text += (char)(w3<<8 + 0x90);                      // wait_time elapsed; note ON, channel 1
-			note_text += '\u0040';								// note num (0) and velocity (40)
+			note_text += (char)0x90;							// Note ON, channel 1
+			note_text += (char)0;								// Note num 0
+			note_text += (char)0;								// Note velocity 0
 			
-			note_text += '\u0000';								// 0 time elapsed (first 2 bytes)
-			note_text += '\u0080';								// 0 time elapsed; note OFF, channel 1
-			note_text += '\u0040';								// note num (0) and velocity (40)
+			note_text += (char)0x80;							// 0 time elapsed
+			note_text += (char)0x80;							// 0 time elapsed
+			note_text += (char)0;								// 0 time elapsed
+			note_text += (char)0x80;							// Note OFF, channel 1
+			note_text += (char)0;								// Note num 0
+			note_text += (char)0x7F;							// Note velocity MAX
 		}
 		
 		return note_text;
