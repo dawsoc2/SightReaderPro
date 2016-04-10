@@ -50,17 +50,17 @@ class Note {
 		
 		String note_text = "";
 		
-		if (staff_position > -20) {						// Note is not a rest
+		if (staff_position > -20) {								// Note is not a rest
 			note_text += (char)0x80;							// Time elapsed (var size)
 			note_text += (char)0x80;							// Time elapsed (var size)
 			note_text += (char)0x00;							// Time elapsed (var size)
 			note_text += (char)0x90;							// Note ON, channel 1 (value 0)
-			note_text += (char)(staff_to_value(clef)&0xFF);					// Note num
+			note_text += (char)(staff_to_value(clef)&0xFF);		// Note num
 			note_text += (char)0x40;							// Note velocity
 		
 			int wait_time = 0;
 			// Add to this list when we add more supported note lengths
-			if (note_type == 'Q') {							// Quarter note
+			if (note_type == 'Q') {								// Quarter note
 				wait_time = 96;									// Wait one beat
 			} else if (note_type == 'H') {						// Half note
 				wait_time = 192;								// Wait 2 beats
@@ -71,19 +71,19 @@ class Note {
 			}
 
 			// Implementation of variable sized numbers (using a consistent 3 bytes)
-			note_text += (char) ((char)((wait_time>>14)&0x7F) | 0x80);		// Note length (first byte)
-			note_text += (char) ((char)((wait_time>>7)&0x7F) | 0x80);		// Note length (second byte)
-			note_text += (char)(wait_time&0x7F);					// Note length (third byte)
+			note_text += (char) ((char)((wait_time>>14)&0x7F) | 0x80);	// Note length (first byte)
+			note_text += (char) ((char)((wait_time>>7)&0x7F) | 0x80);	// Note length (second byte)
+			note_text += (char)(wait_time&0x7F);				// Note length (third byte)
 			
-			note_text += (char)0x80;						// Note OFF, channel 1
-			note_text += (char)(staff_to_value(clef)&0xFF);				// Note num
-			note_text += (char)0x40;						// Note velocity
+			note_text += (char)0x80;							// Note OFF, channel 1
+			note_text += (char)(staff_to_value(clef)&0xFF);		// Note num
+			note_text += (char)0x40;							// Note velocity
 		}
 		
 		else {													// Note is a rest
 			int wait_time = 0;
 			// Add to this list when we add more supported rest lengths
-			if (note_type == 'Q') {							// Quarter rest
+			if (note_type == 'Q') {								// Quarter rest
 				wait_time = 96;									// Wait one beat
 			} else if (note_type == 'H') {						// Half rest
 				wait_time = 192;								// Wait 2 beats
@@ -94,9 +94,9 @@ class Note {
 			}
 			
 			// Implementation of variable sized numbers (using a consistent 3 bytes)
-			note_text += (char) ((char)((wait_time>>14)&0x7F) | 0x80);			// Note length(first byte)
-			note_text += (char) ((char)((wait_time>>7)&0x7F) | 0x80);			// Note length (second byte)
-			note_text += (char)(wait_time&0x7F);						// Note length (third byte)
+			note_text += (char) ((char)((wait_time>>14)&0x7F) | 0x80);	// Note length(first byte)
+			note_text += (char) ((char)((wait_time>>7)&0x7F) | 0x80);	// Note length (second byte)
+			note_text += (char)(wait_time&0x7F);				// Note length (third byte)
 			
 			note_text += (char)0x90;							// Note ON, channel 1
 			note_text += (char)0;								// Note num 0
