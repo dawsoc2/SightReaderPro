@@ -75,9 +75,13 @@ class Note {
 			note_text += (char) ((char)((wait_time>>7)&0x7F) | 0x80);	// Note length (second byte)
 			note_text += (char)(wait_time&0x7F);				// Note length (third byte)
 			
+			note_text += (char)0;
+			
 			note_text += (char)0x80;							// Note OFF, channel 1
 			note_text += (char)(staff_to_value(clef)&0xFF);		// Note num
 			note_text += (char)0x40;							// Note velocity
+			
+			note_text += (char)0;
 		}
 		
 		else {													// Note is a rest
@@ -102,12 +106,16 @@ class Note {
 			note_text += (char)0;								// Note num 0
 			note_text += (char)0;								// Note velocity 0
 			
+			note_text += (char)0;
+			
 			note_text += (char)0x80;							// 0 time elapsed
 			note_text += (char)0x80;							// 0 time elapsed
 			note_text += (char)0;								// 0 time elapsed
 			note_text += (char)0x80;							// Note OFF, channel 1
 			note_text += (char)0;								// Note num 0
 			note_text += (char)0x7F;							// Note velocity MAX
+			
+			note_text += (char)0;
 		}
 		
 		return note_text;
