@@ -54,27 +54,27 @@ class Song {
 		note_text += "MTrk";									// Track designation
 		int length = notes.size()*12 + 6;						// On/Off for each note (6B ea) + tempo set (6B)
 		note_text += (char)(length>>>24);						// Num track events (first byte)
-		note_text += (char)(length<<8>>>24);						// Num track events (second byte)
-		note_text += (char)(length<<16>>>24);						// Num track events (third byte)
+		note_text += (char)(length<<8>>>24);					// Num track events (second byte)
+		note_text += (char)(length<<16>>>24);					// Num track events (third byte)
 		note_text += (char)(length&0xFF);						// Num track events (fourth byte)
 		
 		// First track event is setting tempo
-		note_text += (char)0xFF;							// Event type meta event
-		note_text += (char)0x51;							// Event type tempo setting
+		note_text += (char)0xFF;								// Event type meta event
+		note_text += (char)0x51;								// Event type tempo setting
 		int ms_tempo = 60000000/tempo;							// Convert BPM to microseconds/beat
-		note_text += (char)3;								// Start of tempo set
+		note_text += (char)3;									// Start of tempo set
 		note_text += (char)(ms_tempo<<8>>>24);					// Second byte of ms_tempo
 		note_text += (char)(ms_tempo<<16>>>24);					// Third byte of ms_tempo
-		note_text += (char)(ms_tempo&0xFF);					// Fourth byte of ms_tempo
+		note_text += (char)(ms_tempo&0xFF);						// Fourth byte of ms_tempo
 		
 		// Note track events
 		for (Note note : notes) {
 			note_text += note.get_midi(clef);
 		}
 		
-		note_text += (char)0xFF;					// Event type meta event
-		note_text += (char)0x2F;					// End of Track event
-		note_text += (char)0;						// End of Track
+		note_text += (char)0xFF;								// Event type meta event
+		note_text += (char)0x2F;								// End of Track event
+		note_text += (char)0;									// End of Track
 		
 		return note_text;
 	}
