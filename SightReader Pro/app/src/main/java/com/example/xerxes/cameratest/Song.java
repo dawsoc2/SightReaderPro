@@ -38,32 +38,46 @@ class Song {
 		String note_text = "";
 		
 		// File Header
-		// Note: Java uses 16 bit unicode chars
 		note_text += "MThd";									// File designation
-		note_text += '\u0000';									// Length of header (first 2 bytes)
-		note_text += '\u0006';									// Length of header (second 2 bytes)
-		note_text += '\u0000';									// Format (single track)
-		note_text += '\u0001';									// Number of track chunks (single track)
-		note_text += '\u0060'; 									// Pulses per Quarter note (96 PPQ)
+		note_text += (char)0;									// Length of header (first byte)
+		note_text += (char)0;									// Length of header (second byte)
+		note_text += (char)0;									// Length of header (third byte)
+		note_text += (char)6;									// Length of header (last byte)
+		note_text += (char)0;									// Format (single track)
+		note_text += (char)0;									// Format (single track)
+		note_text += (char)0;									// Number of track chunks
+		note_text += (char)1;									// Number of track chunks (single track)
+		note_text += (char)0;									// Pulses per Quarter note
+		note_text += (char)96; 									// Pulses per Quarter note (96 PPQ)
 		
 		note_text += "MTrk";									// Track designation
-		int length = notes.size()*12 + 6;						// On/Off for each note (6B ea) + tempo set (6B)
-		note_text += (char)(length>>>16);						// Num track events (first 2 bytes)
-		note_text += (char)(length&0xFFFF);						// Num track events (second 2 bytes)
+		int length = notes.size()*12 + 9;						// On/Off for each note (6B ea) + tempo set (6B) + EOT (3B)
+		note_text += (char)(length>>>24);						// Num track events (first byte)
+		note_text += (char)(length<<8>>>24);					// Num track events (second byte)
+		note_text += (char)(length<<16>>>24);					// Num track events (third byte)
+		note_text += (char)(length&0xFF);						// Num track events (fourth byte)
+		
+		note_text += (char)0;
 		
 		// First track event is setting tempo
-		note_text += '\uFF51';									// Event type tempo setting
+		note_text += (char)0xFF;								// Event type meta event
+		note_text += (char)0x51;								// Event type tempo setting
 		int ms_tempo = 60000000/tempo;							// Convert BPM to microseconds/beat
-		note_text += (char)((ms_tempo>>16)&0x00FF|0x0300);		// 0x03 and second byte of ms_tempo
-		note_text += (char)(ms_tempo&0xFFFF);					// Third and fourth byte of ms_tempo
+		note_text += (char)3;									// Start of tempo set
+		note_text += (char)(ms_tempo<<8>>>24);					// Second byte of ms_tempo
+		note_text += (char)(ms_tempo<<16>>>24);					// Third byte of ms_tempo
+		note_text += (char)(ms_tempo&0xFF);						// Fourth byte of ms_tempo
+		
+		note_text += (char)0;
 		
 		// Note track events
 		for (Note note : notes) {
 			note_text += note.get_midi(clef);
 		}
 		
-		note_text += '\uFF2F';						// First two bytes of End of Track
-		note_text += '\u0000';						// End of Track
+		note_text += (char)0xFF;								// Event type meta event
+		note_text += (char)0x2F;								// End of Track event
+		note_text += (char)0;									// End of Track
 		
 		return note_text;
 	}
