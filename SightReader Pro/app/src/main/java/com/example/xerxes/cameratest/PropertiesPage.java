@@ -71,9 +71,11 @@ public class PropertiesPage extends AppCompatActivity {
         int instKeySpinnerPosition = instKeySpinnerArrayAdapter.getPosition("C");
         spinnerInst.setSelection(instKeySpinnerPosition);
 
-        //
+        //create tempo text box
         final EditText tempoEditText = (EditText)findViewById(R.id.editTempo);
         tempoEditText.setText("120");
+
+        final EditText songEditText = (EditText)findViewById(R.id.editSong);
 
         //create process button that will read data from the spinners
         final Button procButton = (Button) findViewById(R.id.processButton);
@@ -82,10 +84,45 @@ public class PropertiesPage extends AppCompatActivity {
                 String clefVal = spinnerClef.getSelectedItem().toString();
                 String keyVal = spinnerKeySig.getSelectedItem().toString();
                 String instVal = spinnerInst.getSelectedItem().toString();
+                String songVal = songEditText.getText().toString();
+                int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
+
+                //let's actually take that tempo and song and create a test midi file
+
+                //now create a Song object
+                Song user_song = new Song(songVal);
+                user_song.change_tempo(text_tempo);
+
+                //force that object into providing a MidiFile for us.
+
+                MidiFile midi = user_song.convert_to_midi();
+
+                // Write the MIDI data to a file
+                File output = new File("sdcard/user_song.mid");
+                try {
+                    midi.writeToFile(output);
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+
+
+                try {
+                    mp.reset();
+                    mp.setDataSource("sdcard/user_song.mid");
+                    mp.prepare();
+                    mp.start();
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        final Button maryButton = (Button) findViewById(R.id.maryButton);
+        maryButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
                 int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
 
                 //let's actually take that tempo and create a test midi file.
-               //first we need a song. Let's use "Mary had a lamb"
+                //first we need a song. Let's use "Mary had a lamb"
                 String mary = "Q2 Q1 Q0 Q1 Q2 Q2 Q2 QR Q1 Q1 Q1 QR Q2 Q4 H4 Q2 Q1 Q0 Q1 Q2 Q2 Q2 Q2 Q1 Q1 Q2 Q1 H0 HR"; //pretty sure this is right.
 
                 //now create a Song object

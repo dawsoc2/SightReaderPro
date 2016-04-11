@@ -119,4 +119,24 @@
         android:layout_toRightOf="@+id/spinnerInstrument"
         android:layout_toEndOf="@+id/spinnerInstrument" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editSong"
+        android:layout_below="@+id/spinnerInstrument"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:text="Q2 Q1 Q0 Q1 Q2 Q2 Q2 QR Q1 Q1 QR" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mary"
+        android:id="@+id/maryButton"
+        android:layout_alignTop="@+id/processButton"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
