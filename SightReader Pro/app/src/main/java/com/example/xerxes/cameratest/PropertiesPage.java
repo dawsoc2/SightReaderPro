@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import com.leff.midi.*;
+import com.leff.midi.util.*;
+import com.leff.midi.event.*;
+import com.leff.midi.event.meta.*;
+
 public class PropertiesPage extends AppCompatActivity {
 
     @Override
@@ -24,6 +33,7 @@ public class PropertiesPage extends AppCompatActivity {
 
         //set variables
         ImageView photoDisplay = (ImageView)findViewById(R.id.prop_imageView);
+        final MediaPlayer mp = new MediaPlayer();
         //create clef spinner
         String clefArray[] = {"Treble", "Bass"};
         final Spinner spinnerClef = (Spinner) findViewById(R.id.spinnerClef);
@@ -63,7 +73,60 @@ public class PropertiesPage extends AppCompatActivity {
                 String clefVal = spinnerClef.getSelectedItem().toString();
                 String keyVal = spinnerKeySig.getSelectedItem().toString();
                 String instVal = spinnerInst.getSelectedItem().toString();
-                int tempo = Integer.parseInt(tempoEditText.getText().toString());
+                int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
+
+                //let's actually take that tempo and create a test midi file.
+                // 1. Create some MidiTracks
+                MidiTrack tempoTrack = new MidiTrack();
+                MidiTrack noteTrack = new MidiTrack();
+
+// 2. Add events to the tracks
+// Track 0 is the tempo map
+                TimeSignature ts = new TimeSignature();
+                ts.setTimeSignature(4, 4, TimeSignature.DEFAULT_METER, TimeSignature.DEFAULT_DIVISION);
+
+                Tempo tempo = new Tempo();
+                tempo.setBpm(text_tempo);
+
+                tempoTrack.insertEvent(ts);
+                tempoTrack.insertEvent(tempo);
+
+// Track 1 will have some notes in it
+                final int NOTE_COUNT = 40;
+
+                for (int i = 0; i < NOTE_COUNT; i++) {
+                    int channel = 0;
+                    int pitch = 1 + i;
+                    int velocity = 100;
+                    long tick = i * 480;
+                    long duration = 120;
+
+                    noteTrack.insertNote(channel, pitch, velocity, tick, duration);
+                }
+
+// 3. Create a MidiFile with the tracks we created
+                ArrayList<MidiTrack> tracks = new ArrayList<MidiTrack>();
+                tracks.add(tempoTrack);
+                tracks.add(noteTrack);
+
+                MidiFile midi = new MidiFile(MidiFile.DEFAULT_RESOLUTION, tracks);
+
+// 4. Write the MIDI data to a file
+                File output = new File("sdcard/exampleout.mid");
+                try {
+                    midi.writeToFile(output);
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+
+
+                try {
+                    mp.reset();
+                    mp.setDataSource("sdcard/exampleout.mid");
+                    mp.prepare();
+                    mp.start();
+                } catch (Exception e) {
+                }
             }
         });
 
@@ -75,16 +138,17 @@ public class PropertiesPage extends AppCompatActivity {
             }
         });
 
-        //dummy intent just to get variables passed
-        Intent intent = getIntent();
-        String imagePath = intent.getStringExtra("imagePath");
 
-        //load bitmap
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+                //dummy intent just to get variables passed
+                Intent intent = getIntent();
+                String imagePath = intent.getStringExtra("imagePath");
 
-        //display bitmap
-        photoDisplay.setImageBitmap(bitmap);
-    }
-}
+                //load bitmap
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+
+                //display bitmap
+                photoDisplay.setImageBitmap(bitmap);
+            }
+        }

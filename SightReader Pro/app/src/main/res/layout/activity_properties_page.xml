@@ -118,4 +118,5 @@
         android:layout_below="@+id/TempoText"
         android:layout_toRightOf="@+id/spinnerInstrument"
         android:layout_toEndOf="@+id/spinnerInstrument" />
+
 </RelativeLayout>
