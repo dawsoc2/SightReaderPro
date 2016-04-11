@@ -1,8 +1,10 @@
 package com.example.xerxes.cameratest.Song;
 
 import java.util.ArrayList;
+import com.leff.midi.*;
+import com.leff.midi.event.meta.*;
 
-class Song {
+public class Song {
 	private ArrayList<Note> notes;
 	private int tempo;
 	private char clef;
@@ -24,7 +26,21 @@ class Song {
 			notes.add(temp);
 		}
     }
-	
+
+	private int type_to_duration(char note_type) {
+		int duration;
+		if (note_type == 'Q') {
+			duration = MidiFile.DEFAULT_RESOLUTION;
+		}
+		else if (note_type == 'H') {
+			duration = MidiFile.DEFAULT_RESOLUTION * 2;
+		}
+		else {
+			duration = 0;
+		}
+		return duration;
+	}
+
 	public void change_clef(char new_clef) {
 		clef = new_clef;
 	}
@@ -32,53 +48,54 @@ class Song {
 	public void change_tempo(int new_tempo) {
 		tempo = new_tempo;
 	}
+
 	
-	
-	public String convert_to_midi() {
-		String note_text = "";
-		
-		// File Header
-		note_text += "MThd";									// File designation
-		note_text += (char)0;									// Length of header (first byte)
-		note_text += (char)0;									// Length of header (second byte)
-		note_text += (char)0;									// Length of header (third byte)
-		note_text += (char)6;									// Length of header (last byte)
-		note_text += (char)0;									// Format (single track)
-		note_text += (char)0;									// Format (single track)
-		note_text += (char)0;									// Number of track chunks
-		note_text += (char)1;									// Number of track chunks (single track)
-		note_text += (char)0;									// Pulses per Quarter note
-		note_text += (char)96; 									// Pulses per Quarter note (96 PPQ)
-		
-		note_text += "MTrk";									// Track designation
-		int length = notes.size()*12 + 9;						// On/Off for each note (6B ea) + tempo set (6B) + EOT (3B)
-		note_text += (char)(length>>>24);						// Num track events (first byte)
-		note_text += (char)(length<<8>>>24);					// Num track events (second byte)
-		note_text += (char)(length<<16>>>24);					// Num track events (third byte)
-		note_text += (char)(length&0xFF);						// Num track events (fourth byte)
-		
-		note_text += (char)0;
-		
-		// First track event is setting tempo
-		note_text += (char)0xFF;								// Event type meta event
-		note_text += (char)0x51;								// Event type tempo setting
-		int ms_tempo = 60000000/tempo;							// Convert BPM to microseconds/beat
-		note_text += (char)3;									// Start of tempo set
-		note_text += (char)(ms_tempo<<8>>>24);					// Second byte of ms_tempo
-		note_text += (char)(ms_tempo<<16>>>24);					// Third byte of ms_tempo
-		note_text += (char)(ms_tempo&0xFF);						// Fourth byte of ms_tempo
-		
-		note_text += (char)0;
-		
-		// Note track events
-		for (Note note : notes) {
-			note_text += note.get_midi(clef);
+	public MidiFile convert_to_midi() {
+		//initialize some tracks
+		MidiTrack tempoTrack = new MidiTrack();
+		MidiTrack noteTrack = new MidiTrack();
+
+		//with time signature
+		TimeSignature ts = new TimeSignature();
+		ts.setTimeSignature(4, 4, TimeSignature.DEFAULT_METER, TimeSignature.DEFAULT_DIVISION);
+
+		//with tempo
+		Tempo midi_tempo = new Tempo();
+		midi_tempo.setBpm(tempo);
+
+		//insert these values
+		tempoTrack.insertEvent(ts);
+		tempoTrack.insertEvent(midi_tempo);
+
+		//keep track of the tick and start adding notes.
+		final int NOTE_COUNT = notes.size();
+		long tick = 0;
+		for (int i = 0; i < NOTE_COUNT; i++) {
+			char note_type = notes.get(i).note_type();
+
+			long duration = type_to_duration(note_type);
+			int pitch = notes.get(i).staff_to_value(clef);
+			// only actually play a note if there's a value
+			//right now the note just plays for its full duration (probably not very natural-sounding)
+			if (pitch != -20) {
+				int channel = 0;
+				int velocity = 100;
+				noteTrack.insertNote(channel, pitch, velocity, tick, duration);
+			}
+			//always increment the tick so we don't overlap notes
+			tick = tick + duration;
 		}
-		
-		note_text += (char)0xFF;								// Event type meta event
-		note_text += (char)0x2F;								// End of Track event
-		note_text += (char)0;									// End of Track
-		
-		return note_text;
+
+		//have to add the tracks to a list to create the MidiFile
+		ArrayList<MidiTrack> tracks = new ArrayList<MidiTrack>();
+		tracks.add(tempoTrack);
+		tracks.add(noteTrack);
+
+		//now create a MidiFile and add them in
+		MidiFile mf = new MidiFile(MidiFile.DEFAULT_RESOLUTION, tracks);
+		//thank god for DEFAULT_RESOLUTION
+
+		//we leave the writing to a file for a parent class.
+		return mf;
 	}
 }

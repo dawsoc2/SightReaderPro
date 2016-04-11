@@ -1,5 +1,6 @@
 package com.example.xerxes.cameratest;
 
+//android imports
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -16,15 +17,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+//java imports
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+//android-midi imports
 import com.leff.midi.*;
 import com.leff.midi.util.*;
 import com.leff.midi.event.*;
 import com.leff.midi.event.meta.*;
 
+//song imports
+import com.example.xerxes.cameratest.Song.*;
+
 public class PropertiesPage extends AppCompatActivity {
+
+    //WHY IS THERE SO MUCH YELLOW IN THIS
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,43 +85,19 @@ public class PropertiesPage extends AppCompatActivity {
                 int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
 
                 //let's actually take that tempo and create a test midi file.
-                // 1. Create some MidiTracks
-                MidiTrack tempoTrack = new MidiTrack();
-                MidiTrack noteTrack = new MidiTrack();
+               //first we need a song. Let's use "Mary had a lamb"
+                String mary = "Q2 Q1 Q0 Q1 Q2 Q2 Q2 QR Q1 Q1 Q1 QR Q2 Q4 H4 Q2 Q1 Q0 Q1 Q2 Q2 Q2 Q2 Q1 Q1 Q2 Q1 H0 HR"; //pretty sure this is right.
 
-// 2. Add events to the tracks
-// Track 0 is the tempo map
-                TimeSignature ts = new TimeSignature();
-                ts.setTimeSignature(4, 4, TimeSignature.DEFAULT_METER, TimeSignature.DEFAULT_DIVISION);
+                //now create a Song object
+                Song mary_song = new Song(mary);
+                mary_song.change_tempo(text_tempo);
 
-                Tempo tempo = new Tempo();
-                tempo.setBpm(text_tempo);
+                //force that object into providing a MidiFile for us.
 
-                tempoTrack.insertEvent(ts);
-                tempoTrack.insertEvent(tempo);
+                MidiFile midi = mary_song.convert_to_midi();
 
-// Track 1 will have some notes in it
-                final int NOTE_COUNT = 40;
-
-                for (int i = 0; i < NOTE_COUNT; i++) {
-                    int channel = 0;
-                    int pitch = 1 + i;
-                    int velocity = 100;
-                    long tick = i * 480;
-                    long duration = 120;
-
-                    noteTrack.insertNote(channel, pitch, velocity, tick, duration);
-                }
-
-// 3. Create a MidiFile with the tracks we created
-                ArrayList<MidiTrack> tracks = new ArrayList<MidiTrack>();
-                tracks.add(tempoTrack);
-                tracks.add(noteTrack);
-
-                MidiFile midi = new MidiFile(MidiFile.DEFAULT_RESOLUTION, tracks);
-
-// 4. Write the MIDI data to a file
-                File output = new File("sdcard/exampleout.mid");
+                // Write the MIDI data to a file
+                File output = new File("sdcard/mary_had_a_little_lamb.mid");
                 try {
                     midi.writeToFile(output);
                 } catch (IOException e) {
@@ -122,7 +107,7 @@ public class PropertiesPage extends AppCompatActivity {
 
                 try {
                     mp.reset();
-                    mp.setDataSource("sdcard/exampleout.mid");
+                    mp.setDataSource("sdcard/mary_had_a_little_lamb.mid");
                     mp.prepare();
                     mp.start();
                 } catch (Exception e) {
