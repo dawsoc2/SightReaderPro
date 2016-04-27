@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.text.InputFilter;
 
 //java imports
 import java.io.File;
@@ -30,6 +31,9 @@ import com.leff.midi.event.meta.*;
 
 //song imports
 import com.example.xerxes.cameratest.Song.*;
+
+//misc. imports
+import com.example.xerxes.cameratest.InputFilterMinMax;
 
 public class PropertiesPage extends AppCompatActivity {
 
@@ -73,6 +77,7 @@ public class PropertiesPage extends AppCompatActivity {
 
         //create tempo text box
         final EditText tempoEditText = (EditText)findViewById(R.id.editTempo);
+        tempoEditText.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "1000")});
         tempoEditText.setText("120");
 
         final EditText songEditText = (EditText)findViewById(R.id.editSong);
@@ -98,7 +103,7 @@ public class PropertiesPage extends AppCompatActivity {
                 MidiFile midi = user_song.convert_to_midi();
 
                 // Write the MIDI data to a file
-                File output = new File("sdcard/user_song.mid");
+                File output = new File("sdcard/SightReaderPro_song.mid");
                 try {
                     midi.writeToFile(output);
                 } catch (IOException e) {
@@ -108,7 +113,7 @@ public class PropertiesPage extends AppCompatActivity {
 
                 try {
                     mp.reset();
-                    mp.setDataSource("sdcard/user_song.mid");
+                    mp.setDataSource("sdcard/SightReaderPro_song.mid");
                     mp.prepare();
                     mp.start();
                 } catch (Exception e) {
@@ -120,10 +125,13 @@ public class PropertiesPage extends AppCompatActivity {
         maryButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
+                String songVal = songEditText.getText().toString();
+                songEditText.setText(songVal.replaceAll("\\s",""));
+/*
 
                 //let's actually take that tempo and create a test midi file.
                 //first we need a song. Let's use "Mary had a lamb"
-                String mary = "Q2 Q1 Q0 Q1 Q2 Q2 Q2 QR Q1 Q1 Q1 QR Q2 Q4 H4 Q2 Q1 Q0 Q1 Q2 Q2 Q2 Q2 Q1 Q1 Q2 Q1 H0 HR"; //pretty sure this is right.
+                String mary = "Q2_ Q1_ Q0_ Q1_ Q2_ Q2_ Q2_ QR_ Q1_ Q1_ Q1_ QR_ Q2_ Q4_ H4_ Q2_ Q1_ Q0_ Q1_ Q2_ Q2_ Q2_ Q2_ Q1_ Q1_ Q2_ Q1_ H0_ HR_"; //pretty sure this is right.
 
                 //now create a Song object
                 Song mary_song = new Song(mary);
@@ -149,6 +157,7 @@ public class PropertiesPage extends AppCompatActivity {
                     mp.start();
                 } catch (Exception e) {
                 }
+*/
             }
         });
 
@@ -174,3 +183,4 @@ public class PropertiesPage extends AppCompatActivity {
                 photoDisplay.setImageBitmap(bitmap);
             }
         }
+
