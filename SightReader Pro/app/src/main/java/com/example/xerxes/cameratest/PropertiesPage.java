@@ -1,9 +1,11 @@
 package com.example.xerxes.cameratest;
 
+//android imports
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +17,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+//java imports
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+//android-midi imports
+import com.leff.midi.*;
+import com.leff.midi.util.*;
+import com.leff.midi.event.*;
+import com.leff.midi.event.meta.*;
+
+//song imports
+import com.example.xerxes.cameratest.Song.*;
+
 public class PropertiesPage extends AppCompatActivity {
+
+    //WHY IS THERE SO MUCH YELLOW IN THIS
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +42,7 @@ public class PropertiesPage extends AppCompatActivity {
 
         //set variables
         ImageView photoDisplay = (ImageView)findViewById(R.id.prop_imageView);
+        final MediaPlayer mp = new MediaPlayer();
         //create clef spinner
         String clefArray[] = {"Treble", "Bass"};
         final Spinner spinnerClef = (Spinner) findViewById(R.id.spinnerClef);
@@ -52,9 +71,11 @@ public class PropertiesPage extends AppCompatActivity {
         int instKeySpinnerPosition = instKeySpinnerArrayAdapter.getPosition("C");
         spinnerInst.setSelection(instKeySpinnerPosition);
 
-        //
+        //create tempo text box
         final EditText tempoEditText = (EditText)findViewById(R.id.editTempo);
         tempoEditText.setText("120");
+
+        final EditText songEditText = (EditText)findViewById(R.id.editSong);
 
         //create process button that will read data from the spinners
         final Button procButton = (Button) findViewById(R.id.processButton);
@@ -63,7 +84,71 @@ public class PropertiesPage extends AppCompatActivity {
                 String clefVal = spinnerClef.getSelectedItem().toString();
                 String keyVal = spinnerKeySig.getSelectedItem().toString();
                 String instVal = spinnerInst.getSelectedItem().toString();
-                int tempo = Integer.parseInt(tempoEditText.getText().toString());
+                String songVal = songEditText.getText().toString();
+                int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
+
+                //let's actually take that tempo and song and create a test midi file
+
+                //now create a Song object
+                Song user_song = new Song(songVal);
+                user_song.change_tempo(text_tempo);
+
+                //force that object into providing a MidiFile for us.
+
+                MidiFile midi = user_song.convert_to_midi();
+
+                // Write the MIDI data to a file
+                File output = new File("sdcard/user_song.mid");
+                try {
+                    midi.writeToFile(output);
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+
+
+                try {
+                    mp.reset();
+                    mp.setDataSource("sdcard/user_song.mid");
+                    mp.prepare();
+                    mp.start();
+                } catch (Exception e) {
+                }
+            }
+        });
+
+        final Button maryButton = (Button) findViewById(R.id.maryButton);
+        maryButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
+
+                //let's actually take that tempo and create a test midi file.
+                //first we need a song. Let's use "Mary had a lamb"
+                String mary = "Q2 Q1 Q0 Q1 Q2 Q2 Q2 QR Q1 Q1 Q1 QR Q2 Q4 H4 Q2 Q1 Q0 Q1 Q2 Q2 Q2 Q2 Q1 Q1 Q2 Q1 H0 HR"; //pretty sure this is right.
+
+                //now create a Song object
+                Song mary_song = new Song(mary);
+                mary_song.change_tempo(text_tempo);
+
+                //force that object into providing a MidiFile for us.
+
+                MidiFile midi = mary_song.convert_to_midi();
+
+                // Write the MIDI data to a file
+                File output = new File("sdcard/mary_had_a_little_lamb.mid");
+                try {
+                    midi.writeToFile(output);
+                } catch (IOException e) {
+                    System.err.println(e);
+                }
+
+
+                try {
+                    mp.reset();
+                    mp.setDataSource("sdcard/mary_had_a_little_lamb.mid");
+                    mp.prepare();
+                    mp.start();
+                } catch (Exception e) {
+                }
             }
         });
 
@@ -75,16 +160,17 @@ public class PropertiesPage extends AppCompatActivity {
             }
         });
 
-        //dummy intent just to get variables passed
-        Intent intent = getIntent();
-        String imagePath = intent.getStringExtra("imagePath");
 
-        //load bitmap
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+                //dummy intent just to get variables passed
+                Intent intent = getIntent();
+                String imagePath = intent.getStringExtra("imagePath");
 
-        //display bitmap
-        photoDisplay.setImageBitmap(bitmap);
-    }
-}
+                //load bitmap
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+
+                //display bitmap
+                photoDisplay.setImageBitmap(bitmap);
+            }
+        }
