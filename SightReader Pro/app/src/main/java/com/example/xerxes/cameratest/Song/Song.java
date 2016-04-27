@@ -10,7 +10,8 @@ public class Song {
 	private char clef;
 	
 	/**
-	The argument input is a String of the form "Q3 Q2 Q5 Q8 HR HR QR Q10 Q11 QR" for example
+	The argument input is a String of the form "Q3_ Q2_ Q5_ Q8_ HR_ HR_ QR_ Q10_ Q11_ QR_" for example
+	 or "CT_T4/4_Q3_ Q2_    Q5_ Q8_HR_HR_QR_ Q10_ Q11_ QR_". Whitespace is variable, beginning stuff is optional. No key signatures.
 	
 	This constructor will create an ArrayList of Note objects according to input.	
 	*/
@@ -18,12 +19,27 @@ public class Song {
         notes = new ArrayList<Note>();							
 		tempo = 100;											//default tempo will be 100 bpm
 		clef = 'T';												//default clef is T for treble
-		
-		Note temp;												//to store length of each note temporarily for the song
-		String[] input_data = input.split(" ");	
+		char[] valid_values = {'Q', 'H', 'W'};
+
+		Note temp;											//to store length of each note temporarily for the song
+		String temp_input = input.replaceAll("\\s","");	    //temporary string to strip whitespace out.
+		String[] input_data = temp_input.split("_");
 		for (int i=0; i< input_data.length; i++){
-			temp = new Note(input_data[i]);				
-			notes.add(temp);
+			String next_str = input_data[i];
+			if (next_str.charAt(0) == 'C') {
+				if (next_str.charAt(1) == 'T' || next_str.charAt(1) == 'B') {
+					clef = next_str.charAt(1);
+				}
+			}
+			else if (next_str.charAt(0) == 'T') {/* this might do something eventually. Checks time signature. */}
+			else {
+				for(int j = 0; j < valid_values.length; j++) {
+					if (next_str.charAt(0) == valid_values[j]) {
+						temp = new Note(next_str);
+						notes.add(temp);
+					}
+				}
+			}
 		}
     }
 
@@ -34,6 +50,9 @@ public class Song {
 		}
 		else if (note_type == 'H') {
 			duration = MidiFile.DEFAULT_RESOLUTION * 2;
+		}
+		else if (note_type == 'W') {
+			duration = MidiFile.DEFAULT_RESOLUTION * 4;
 		}
 		else {
 			duration = 0;

@@ -117,7 +117,8 @@
         android:id="@+id/editTempo"
         android:layout_below="@+id/TempoText"
         android:layout_toRightOf="@+id/spinnerInstrument"
-        android:layout_toEndOf="@+id/spinnerInstrument" />
+        android:layout_toEndOf="@+id/spinnerInstrument"
+        android:hint="1 - 1000" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -128,7 +129,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:text="Q2 Q1 Q0 Q1 Q2 Q2 Q2 QR Q1 Q1 QR" />
+        android:text="Q2_Q1_Q0_Q1_Q2_Q2_Q2_QR_Q1_Q1_QR_" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
