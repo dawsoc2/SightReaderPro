@@ -135,7 +135,7 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mary"
+        android:text="Blob_cut"
         android:id="@+id/maryButton"
         android:layout_alignTop="@+id/processButton"
         android:layout_centerHorizontal="true" />
