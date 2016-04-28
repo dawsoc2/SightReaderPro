@@ -1,8 +1,10 @@
 // Blob-cutting utility
 // Takes BMP image input
 // Returns BMP image of input with notes separated into blobs
+package com.example.xerxes.cameratest;
 
 import android.graphics.Bitmap;
+
 
 class BlobCut {
         public BlobCut(){}
@@ -109,7 +111,8 @@ class BlobCut {
                 int im_width = input_image.getWidth();
                 input_data = new int[im_height * im_width];
 
-                f_size = im_height/5 + 1 - (im_height/5)%2;
+                //f_size = im_height/5 + 1 - (im_height/5)%2;
+                f_size = im_height/10 + 1;
                 filter = new int[f_size * f_size];
                 for (int i=0; i<f_size; i++) {
                         for (int j=0; j<f_size/2; j++) {

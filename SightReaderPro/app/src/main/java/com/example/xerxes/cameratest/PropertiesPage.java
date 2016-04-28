@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.util.*;
 
 //android-midi imports
+import com.googlecode.tesseract.android.TessBaseAPI;
 import com.leff.midi.*;
 import com.leff.midi.util.*;
 import com.leff.midi.event.*;
@@ -34,6 +36,7 @@ import com.example.xerxes.cameratest.Song.*;
 
 //misc. imports
 import com.example.xerxes.cameratest.InputFilterMinMax;
+import com.example.xerxes.cameratest.BlobCut;
 
 public class PropertiesPage extends AppCompatActivity {
 
@@ -44,9 +47,25 @@ public class PropertiesPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_properties_page);
 
+        //dummy intent just to get variables passed
+        Intent intent = getIntent();
+        String imagePath = intent.getStringExtra("imagePath");
+
+        //load bitmap
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        final Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+
         //set variables
-        ImageView photoDisplay = (ImageView)findViewById(R.id.prop_imageView);
+        final ImageView photoDisplay = (ImageView)findViewById(R.id.prop_imageView);
         final MediaPlayer mp = new MediaPlayer();
+        final String DATA_PATH = Environment.getExternalStorageDirectory().toString() + "/CameraTest/";
+        final String lang = "mus";
+
+
+        //display bitmap
+        photoDisplay.setImageBitmap(bitmap);
+
         //create clef spinner
         String clefArray[] = {"Treble", "Bass"};
         final Spinner spinnerClef = (Spinner) findViewById(R.id.spinnerClef);
@@ -127,6 +146,20 @@ public class PropertiesPage extends AppCompatActivity {
                 int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
                 String songVal = songEditText.getText().toString();
                 songEditText.setText(songVal.replaceAll("\\s",""));
+
+                //blob the bitmap
+                BlobCut blobber = new BlobCut();
+                Bitmap blobbed_bitmap = blobber.blob_cut(bitmap);
+                photoDisplay.setImageBitmap(blobbed_bitmap);
+
+                TessBaseAPI baseApi = new TessBaseAPI();
+                baseApi.setDebug(true);
+                baseApi.init(DATA_PATH, lang);
+                baseApi.setImage(bitmap);
+
+                String recognizedText = baseApi.getUTF8Text();
+
+                baseApi.end();
 /*
 
                 //let's actually take that tempo and create a test midi file.
@@ -170,17 +203,7 @@ public class PropertiesPage extends AppCompatActivity {
         });
 
 
-                //dummy intent just to get variables passed
-                Intent intent = getIntent();
-                String imagePath = intent.getStringExtra("imagePath");
 
-                //load bitmap
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
-
-                //display bitmap
-                photoDisplay.setImageBitmap(bitmap);
             }
         }
 

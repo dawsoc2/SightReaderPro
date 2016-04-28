@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 String imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
                 toPropertiesPage.putExtra("imagePath", imagePath);
                 startActivity(toPropertiesPage);
+                cursor.close();
             }
         }
     }
@@ -117,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         cursor.moveToFirst();
         int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-        return cursor.getString(idx);
+        String output = cursor.getString(idx);
+        cursor.close();
+        return output;
     }
 }
