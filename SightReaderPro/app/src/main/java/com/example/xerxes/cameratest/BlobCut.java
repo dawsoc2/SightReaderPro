@@ -97,7 +97,7 @@ class BlobCut {
                 convert_bw(image, out, 128);
         }
 
-        public Bitmap.Bitmap blob_cut(Bitmap.Bitmap input_image) {
+        public Bitmap blob_cut(Bitmap input_image) {
 				// Takes input bitmap image, returns image with blobs separated
                 int[] input_data;
                 int[] temp1;
