@@ -27,48 +27,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/iconImageView"
+        android:longClickable="false"
+        android:src="@drawable/ic_launcher"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:longClickable="false"
-        android:src="@drawable/ic_launcher"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/photoButton"
-        android:layout_toEndOf="@+id/photoButton" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/photoButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="btnTakePhoto"
-        android:src="@drawable/camera_icon"
-        android:layout_above="@+id/photoImageView"
-        android:layout_below="@+id/iconImageView"
-        android:layout_toStartOf="@+id/pickerButton"
-        android:scaleType="fitCenter" />
+        android:layout_above="@+id/pickerButton" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/pickerButton"
-        android:layout_below="@+id/iconImageView"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:onClick="btnSelectPhoto"
-        android:src="@drawable/gallery_icon" />
+        android:src="@drawable/gallery_icon"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Play A Song!"
-        android:id="@+id/debug_prop_btn"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/photoButton"
-        android:layout_toLeftOf="@+id/iconImageView"
-        android:layout_toStartOf="@+id/iconImageView"
-        android:onClick="btnTestProp" />
 </RelativeLayout>

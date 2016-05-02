@@ -44,9 +44,24 @@ public class PropertiesPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_properties_page);
 
+        final String songVal = "Q2_ Q2_ Q3_ Q4_ Q4_ Q3_ Q2_ Q1_ Q0_ Q0_ Q1_ Q2_ Q2_ Q1_ H1_";
+
         //set variables
         ImageView photoDisplay = (ImageView)findViewById(R.id.prop_imageView);
         final MediaPlayer mp = new MediaPlayer();
+
+        //dummy intent just to get variables passed
+        Intent intent = getIntent();
+        final String imagePath = intent.getStringExtra("imagePath");
+
+        //load bitmap
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+
+        //display bitmap
+        photoDisplay.setImageBitmap(bitmap);
+
         //create clef spinner
         String clefArray[] = {"Treble", "Bass"};
         final Spinner spinnerClef = (Spinner) findViewById(R.id.spinnerClef);
@@ -80,23 +95,25 @@ public class PropertiesPage extends AppCompatActivity {
         tempoEditText.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "1000")});
         tempoEditText.setText("120");
 
-        final EditText songEditText = (EditText)findViewById(R.id.editSong);
-
         //create process button that will read data from the spinners
         final Button procButton = (Button) findViewById(R.id.processButton);
         procButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String clefVal = spinnerClef.getSelectedItem().toString();
+                String tempClefVal = spinnerClef.getSelectedItem().toString();
+                char clefVal;
                 String keyVal = spinnerKeySig.getSelectedItem().toString();
                 String instVal = spinnerInst.getSelectedItem().toString();
-                String songVal = songEditText.getText().toString();
                 int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
+
+                if (tempClefVal == "Treble") {clefVal = 'T';}
+                else {clefVal = 'B';}
 
                 //let's actually take that tempo and song and create a test midi file
 
                 //now create a Song object
                 Song user_song = new Song(songVal);
                 user_song.change_tempo(text_tempo);
+                user_song.change_clef(clefVal);
 
                 //force that object into providing a MidiFile for us.
 
@@ -110,56 +127,16 @@ public class PropertiesPage extends AppCompatActivity {
                     System.err.println(e);
                 }
 
+                //create intent to start PlayPage
+                Intent toPlayPage = new Intent(PropertiesPage.this, PlayPage.class);
+                toPlayPage.putExtra("mpPath", "sdcard/SightReaderPro_song.mid");
+                toPlayPage.putExtra("imagePath", imagePath);
 
-                try {
-                    mp.reset();
-                    mp.setDataSource("sdcard/SightReaderPro_song.mid");
-                    mp.prepare();
-                    mp.start();
-                } catch (Exception e) {
-                }
+                //send us off to the play page
+                startActivity(toPlayPage);
             }
         });
 
-        final Button maryButton = (Button) findViewById(R.id.maryButton);
-        maryButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
-                String songVal = songEditText.getText().toString();
-                songEditText.setText(songVal.replaceAll("\\s",""));
-/*
-
-                //let's actually take that tempo and create a test midi file.
-                //first we need a song. Let's use "Mary had a lamb"
-                String mary = "Q2_ Q1_ Q0_ Q1_ Q2_ Q2_ Q2_ QR_ Q1_ Q1_ Q1_ QR_ Q2_ Q4_ H4_ Q2_ Q1_ Q0_ Q1_ Q2_ Q2_ Q2_ Q2_ Q1_ Q1_ Q2_ Q1_ H0_ HR_"; //pretty sure this is right.
-
-                //now create a Song object
-                Song mary_song = new Song(mary);
-                mary_song.change_tempo(text_tempo);
-
-                //force that object into providing a MidiFile for us.
-
-                MidiFile midi = mary_song.convert_to_midi();
-
-                // Write the MIDI data to a file
-                File output = new File("sdcard/mary_had_a_little_lamb.mid");
-                try {
-                    midi.writeToFile(output);
-                } catch (IOException e) {
-                    System.err.println(e);
-                }
-
-
-                try {
-                    mp.reset();
-                    mp.setDataSource("sdcard/mary_had_a_little_lamb.mid");
-                    mp.prepare();
-                    mp.start();
-                } catch (Exception e) {
-                }
-*/
-            }
-        });
 
         //creates back button that will take it back to the first page
         final Button backButton = (Button) findViewById(R.id.prop_back_btn);
@@ -170,17 +147,6 @@ public class PropertiesPage extends AppCompatActivity {
         });
 
 
-                //dummy intent just to get variables passed
-                Intent intent = getIntent();
-                String imagePath = intent.getStringExtra("imagePath");
-
-                //load bitmap
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
-
-                //display bitmap
-                photoDisplay.setImageBitmap(bitmap);
             }
         }
 

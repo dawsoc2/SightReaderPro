@@ -74,9 +74,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(selectIntent, PICKER_REQUEST);
     }
 
-    public void btnTestProp(View v) {
-        startActivity(new Intent(MainActivity.this, PropertiesPage.class));
-    }
+
 
 
     @Override
