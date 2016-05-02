@@ -73,7 +73,7 @@ public class PropertiesPage extends AppCompatActivity {
         spinnerClef.setSelection(clefSpinnerPosition);
 
         //create key signature spinner
-        String keySigArray[] = {"B/C♭", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭/C♯", "G♭/F♯"};
+        String keySigArray[] = {"C♯", "F♯", "B", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭", "G♭"};
         final Spinner spinnerKeySig = (Spinner) findViewById(R.id.spinnerKeySignature);
         ArrayAdapter<String> keySigSpinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, keySigArray);
         keySigSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
@@ -105,8 +105,11 @@ public class PropertiesPage extends AppCompatActivity {
                 String instVal = spinnerInst.getSelectedItem().toString();
                 int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
 
-                if (tempClefVal == "Treble") {clefVal = 'T';}
-                else {clefVal = 'B';}
+                if (tempClefVal == "Treble") {
+                    clefVal = 'T';
+                } else {
+                    clefVal = 'B';
+                }
 
                 //let's actually take that tempo and song and create a test midi file
 

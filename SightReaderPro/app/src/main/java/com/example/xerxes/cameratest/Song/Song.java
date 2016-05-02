@@ -45,7 +45,10 @@ public class Song {
 
 	private int type_to_duration(char note_type) {
 		int duration;
-		if (note_type == 'Q') {
+		if (note_type == 'E') {
+			duration = MidiFile.DEFAULT_RESOLUTION / 2;
+		}
+		else if (note_type == 'Q') {
 			duration = MidiFile.DEFAULT_RESOLUTION;
 		}
 		else if (note_type == 'H') {
@@ -68,6 +71,30 @@ public class Song {
 		tempo = new_tempo;
 	}
 
+    //adds accidental "acc" to every note that has the same base value as "val"
+    private void add_accidentals(int val, char acc) {
+        for (int i = 0; i < notes.size(); i++) {
+            if (notes.get(i).note_value() % 7 == val) {
+                notes.get(i).add_accidental(acc);
+            }
+        }
+    }
+
+    private int key_to_int (String key) {
+        if (key == "C") return 0;
+    }
+
+    // has a whole bunch of key sig strings and does these.
+    public void change_key(String key) {
+        //"C♯", "F♯", "B", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭", "G♭"
+        //these are the keys
+        if (key == "C") {
+            for (int i = 0; i < 8; i++) {
+                add_accidentals(i, 'n');
+            }
+        }
+        else if (key )
+    }
 	
 	public MidiFile convert_to_midi() {
 		//initialize some tracks
@@ -110,11 +137,11 @@ public class Song {
 		tracks.add(tempoTrack);
 		tracks.add(noteTrack);
 
-		//now create a MidiFile and add them in
-		MidiFile mf = new MidiFile(MidiFile.DEFAULT_RESOLUTION, tracks);
-		//thank god for DEFAULT_RESOLUTION
 
+
+		//now create a MidiFile and add them in
+		//thank god for DEFAULT_RESOLUTION
 		//we leave the writing to a file for a parent class.
-		return mf;
+		return new MidiFile(MidiFile.DEFAULT_RESOLUTION, tracks);
 	}
 }
