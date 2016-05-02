@@ -1,8 +1,10 @@
 // Blob-cutting utility
 // Takes BMP image input
 // Returns BMP image of input with notes separated into blobs
+package com.example.xerxes.cameratest;
 
 import android.graphics.Bitmap;
+
 
 class BlobCut {
         public BlobCut(){}
@@ -29,7 +31,7 @@ class BlobCut {
                 int r = t_val << 16;
                 int g = t_val << 8;
                 int b = t_val;
-                return 0xff000000 & r & g & b;
+                return 0xff000000 | r | g | b;
         }
 
         private void filter_image(int[] image, int im_height, int im_width, int[] filter, int f_size, int[] out) {
@@ -44,13 +46,13 @@ class BlobCut {
                 }
 
                 for (int row = 0; row < im_height; row++) {
-                        for (int col = 0; col < im_height; col++) {
+                        for (int col = 0; col < im_width; col++) {
                                 p_sum = 0;
                                 for (int i = 0; i<f_size; i++) {
                                         for (int j = 0; j<f_size; j++) {
                                                 if (row-edge+i < 0 || row-edge+i >= im_height) {
                                                         p_val = 0xffffffff;
-                                                } else if (col-edge+j < 0 || col-edge+j >= im_height) {
+                                                } else if (col-edge+j < 0 || col-edge+j >= im_width) {
                                                         p_val = 0xffffffff;
                                                 } else {
                                                         p_val = image[(row-edge+i)*im_width + (col-edge+j)];
@@ -109,7 +111,8 @@ class BlobCut {
                 int im_width = input_image.getWidth();
                 input_data = new int[im_height * im_width];
 
-                f_size = im_height/5 + 1 - (im_height/5)%2;
+                //f_size = im_height/5 + 1 - (im_height/5)%2;
+                f_size = 25;
                 filter = new int[f_size * f_size];
                 for (int i=0; i<f_size; i++) {
                         for (int j=0; j<f_size/2; j++) {
@@ -127,9 +130,15 @@ class BlobCut {
                 convert_bw(input_data, temp1);
 
                 temp2 = new int[im_height * im_width];
+            /*
+                for(int i = 0; i < 10; i++) {
+                        filter_image(temp1, im_height, im_width, filter, f_size, temp2);
+                        filter_image(temp2, im_height, im_width, filter, f_size, temp1);
+                }
+                */
                 filter_image(temp1, im_height, im_width, filter, f_size, temp2);
 
-                convert_bw(temp2, temp1);
+                convert_bw(temp2, temp1, 192);
                 white_mask(input_data, im_height, im_width, temp1, temp2);
 
                 return Bitmap.createBitmap(temp2, im_width, im_height, Bitmap.Config.valueOf("ARGB_8888"));
