@@ -44,7 +44,8 @@ public class PropertiesPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_properties_page);
 
-        final String songVal = "Q2_ Q2_ Q3_ Q4_ Q4_ Q3_ Q2_ Q1_ Q0_ Q0_ Q1_ Q2_ Q2_ Q1_ H1_";
+        final String songVal = "S5_ S6_ S7_ S6_ E5_ ER_ S5_ S6_ S7_ S8_ E9_ ER_ S8_ S9_ S10_ S11_ E12_ ER_ S12_ S13_ S14_ S15_ E16_ ER_" +
+                               "ER_ E9_ E9_ E10_ E8_ ER_ Q8_ ER_ E11_ E8_ E9_ E7_ ER_ Q9_";
 
         //set variables
         ImageView photoDisplay = (ImageView)findViewById(R.id.prop_imageView);
@@ -73,7 +74,7 @@ public class PropertiesPage extends AppCompatActivity {
         spinnerClef.setSelection(clefSpinnerPosition);
 
         //create key signature spinner
-        String keySigArray[] = {"C♯", "F♯", "B", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭", "G♭"};
+        String keySigArray[] = {"C♯", "F♯", "B", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭", "G♭", "C♭"};
         final Spinner spinnerKeySig = (Spinner) findViewById(R.id.spinnerKeySignature);
         ArrayAdapter<String> keySigSpinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, keySigArray);
         keySigSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
@@ -117,6 +118,7 @@ public class PropertiesPage extends AppCompatActivity {
                 Song user_song = new Song(songVal);
                 user_song.change_tempo(text_tempo);
                 user_song.change_clef(clefVal);
+                user_song.change_key(keyVal);
 
                 //force that object into providing a MidiFile for us.
 

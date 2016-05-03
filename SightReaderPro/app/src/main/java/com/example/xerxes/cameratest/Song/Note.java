@@ -43,7 +43,8 @@ class Note {
 					84,86,88,89,91,93,95,
 					96,98,100,101,103,105,107};
 			if (staff_position == -20) {return staff_position;}
-			return tclef[staff_position + 21 + acc_to_val(accidental)];
+			//tack on that accidental value.
+			return tclef[staff_position + 21] + acc_to_val(accidental);
 		}
 		if (clef == 'B') {
 			int[] bclef =  { 4, 5, 7, 9,11,12,14,
@@ -54,7 +55,8 @@ class Note {
 					64,65,67,69,71,72,74,
 					76,77,79,81,83,84,86};
 			if (staff_position == -20) {return staff_position;}
-			return bclef[staff_position + 21 + acc_to_val(accidental)];
+			//tack on that accidental value.
+			return bclef[staff_position + 21] + acc_to_val(accidental);
 		}
 		return 0;
 	}

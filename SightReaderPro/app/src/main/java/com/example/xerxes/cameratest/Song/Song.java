@@ -19,7 +19,7 @@ public class Song {
         notes = new ArrayList<Note>();							
 		tempo = 100;											//default tempo will be 100 bpm
 		clef = 'T';												//default clef is T for treble
-		char[] valid_values = {'Q', 'H', 'W'};
+		char[] valid_values = {'S', 'E', 'Q', 'H', 'W'};
 
 		Note temp;											//to store length of each note temporarily for the song
 		String temp_input = input.replaceAll("\\s","");	    //temporary string to strip whitespace out.
@@ -45,7 +45,10 @@ public class Song {
 
 	private int type_to_duration(char note_type) {
 		int duration;
-		if (note_type == 'E') {
+        if (note_type == 'S') {
+            duration = MidiFile.DEFAULT_RESOLUTION / 4;
+        }
+		else if (note_type == 'E') {
 			duration = MidiFile.DEFAULT_RESOLUTION / 2;
 		}
 		else if (note_type == 'Q') {
@@ -81,19 +84,59 @@ public class Song {
     }
 
     private int key_to_int (String key) {
-        if (key == "C") return 0;
+        switch(key) {
+            case "C♭" :
+                return -7;
+            case "G♭" :
+                return -6;
+            case "D♭" :
+                return -5;
+            case "A♭" :
+                return -4;
+            case "E♭" :
+                return -3;
+            case "B♭" :
+                return -2;
+            case "F" :
+                return -1;
+            case "G" :
+                return 1;
+            case "D" :
+                return 2;
+            case "A" :
+                return 3;
+            case "E" :
+                return 4;
+            case "B" :
+                return 5;
+            case "F#" :
+                return 6;
+            case "C#" :
+                return 7;
+        }
+        return 0;
     }
 
     // has a whole bunch of key sig strings and does these.
     public void change_key(String key) {
-        //"C♯", "F♯", "B", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭", "G♭"
+        //"C♯", "F♯", "B", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭" "G♭"
+        //Sharps: F, C, G, D, A, E, B
+        //Flats: B, E, A, D, G, C, F
         //these are the keys
-        if (key == "C") {
-            for (int i = 0; i < 8; i++) {
-                add_accidentals(i, 'n');
+        int[] sharps = {3, 0, 4, 1, 5, 2, 6};
+        int[] flats = {6, 2, 5, 1, 4, 0, 3};
+        //technically you could just iterate through one list backwards or forwards but I'm lazzzyy.
+        if (key_to_int(key) > 0) {          //sharp
+            for (int i = 0; i < key_to_int(key); i++) {
+                add_accidentals(sharps[i], 's');
             }
         }
-        else if (key )
+        else if (key_to_int(key) < 0) {     //flats
+            for (int i = 0; i < -key_to_int(key); i++) {
+                add_accidentals(flats[i], 'f');
+            }
+        }
+        // shouldn't need to check for 0. key_to_int() can only return -6 through 6 so no error checking is necessary either
     }
 	
 	public MidiFile convert_to_midi() {
