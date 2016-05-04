@@ -41,7 +41,7 @@ public class PlayPage extends AppCompatActivity {
         //set image
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(view_string, options);
+        final Bitmap bitmap = BitmapFactory.decodeFile(view_string, options);
 
         //display bitmap
         final ImageView photoDisplay = (ImageView) findViewById(R.id.play_page_view);
@@ -50,6 +50,7 @@ public class PlayPage extends AppCompatActivity {
         final Button backButton = (Button) findViewById(R.id.back_btn_play);
         backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                bitmap.recycle();
                 startActivity(new Intent(PlayPage.this, MainActivity.class));
             }
         });
@@ -57,6 +58,7 @@ public class PlayPage extends AppCompatActivity {
         final Button propButton = (Button) findViewById(R.id.back_to_prop);
         propButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                bitmap.recycle();
                 Intent toPropertiesPage = new Intent(PlayPage.this, PropertiesPage.class);
                 toPropertiesPage.putExtra("imagePath", view_string);
                 startActivity(toPropertiesPage);

@@ -58,7 +58,7 @@ public class PropertiesPage extends AppCompatActivity {
         //load bitmap
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
+        final Bitmap bitmap = BitmapFactory.decodeFile(imagePath, options);
 
         //display bitmap
         photoDisplay.setImageBitmap(bitmap);
@@ -147,6 +147,7 @@ public class PropertiesPage extends AppCompatActivity {
         final Button backButton = (Button) findViewById(R.id.prop_back_btn);
         backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                bitmap.recycle();
                 startActivity(new Intent(PropertiesPage.this, MainActivity.class));
             }
         });

@@ -123,8 +123,15 @@ public class Song {
         //Sharps: F, C, G, D, A, E, B
         //Flats: B, E, A, D, G, C, F
         //these are the keys
-        int[] sharps = {3, 0, 4, 1, 5, 2, 6};
-        int[] flats = {6, 2, 5, 1, 4, 0, 3};
+        int [] sharps = {3, 0, 4, 1, 5, 2, 6};
+        int [] flats = {6, 2, 5, 1, 4, 0, 3};
+        int [] bass_sharps = {1, 5, 2, 6, 3, 0, 4};
+        int [] bass_flats = {4, 0, 3, 6, 2, 5, 1};
+		if (clef == 'B') {
+            sharps = bass_sharps;
+            flats = bass_flats;
+        }
+
         //technically you could just iterate through one list backwards or forwards but I'm lazzzyy.
         if (key_to_int(key) > 0) {          //sharp
             for (int i = 0; i < key_to_int(key); i++) {
