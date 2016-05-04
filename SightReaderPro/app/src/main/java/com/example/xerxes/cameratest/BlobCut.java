@@ -33,7 +33,34 @@ class BlobCut {
                 int b = t_val;
                 return 0xff000000 | r | g | b;
         }
-
+		
+		
+		private void column_filter_image(int[] image, int im_height, int im_width, int[] filter, int f_size, int[] out) {
+				int f_sum = 0;
+                int p_sum;
+                int p_val;
+                int edge = f_size/2;
+				
+				for (int i = 0; i<f_size; i++) {
+						f_sum += filter[i];
+				}
+				
+				for (int row = 0; row < im_height; row++) {
+						for (int col = 0; col < im_width; col++) {
+								p_sum = 0;
+								for (int i = 0; i<f_size; i++) {
+										if (row-edge+i < 0 || row-edge+i >= im_height) {
+												p_val = 0xffffffff;
+										} else {
+												p_val = image[(row-edge+i)*im_width + col];
+										}
+										p_sum += get_grey(p_val) * filter[i];
+								}
+								out[row*im_width + col] = put_grey(p_sum/f_sum);
+						}
+				}
+		}
+				
         private void filter_image(int[] image, int im_height, int im_width, int[] filter, int f_size, int[] out) {
 				// Applies filter to image data, puts filtered image data to out[]
                 int f_sum = 0;
@@ -105,6 +132,7 @@ class BlobCut {
                 int[] temp1;
                 int[] temp2;
                 int[] filter;
+				int[] col_filter;
                 int f_size;
 
                 int im_height = input_image.getHeight();
@@ -114,11 +142,13 @@ class BlobCut {
                 //f_size = im_height/5 + 1 - (im_height/5)%2;
                 f_size = 25;
                 filter = new int[f_size * f_size];
+				col_filter = new int[f_size];
                 for (int i=0; i<f_size; i++) {
                         for (int j=0; j<f_size/2; j++) {
                                 filter[i*f_size + j] = 0;
                         }
                         filter[i*f_size + f_size/2] = 1;
+						col_filter[i] = 1;
                         for (int j=f_size/2 + 1; j<f_size; j++) {
                                 filter[i*f_size + j] = 0;
                         }
@@ -130,13 +160,14 @@ class BlobCut {
                 convert_bw(input_data, temp1);
 
                 temp2 = new int[im_height * im_width];
-            /*
+				
                 for(int i = 0; i < 10; i++) {
-                        filter_image(temp1, im_height, im_width, filter, f_size, temp2);
-                        filter_image(temp2, im_height, im_width, filter, f_size, temp1);
+                        column_filter_image(temp1, im_height, im_width, col_filter, f_size, temp2);
+                        column_filter_image(temp2, im_height, im_width, col_filter, f_size, temp1);
                 }
-                */
-                filter_image(temp1, im_height, im_width, filter, f_size, temp2);
+                
+                //filter_image(temp1, im_height, im_width, filter, f_size, temp2);
+				column_filter_image(temp1, im_height, im_width, col_filter, f_size, temp2);
 
                 convert_bw(temp2, temp1, 192);
                 white_mask(input_data, im_height, im_width, temp1, temp2);
