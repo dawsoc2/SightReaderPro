@@ -27,7 +27,7 @@ public class PlayPage extends AppCompatActivity {
         //dummy intent just to get variables passed
         Intent intent = getIntent();
         final String mp_string = intent.getStringExtra("mpPath");
-        String view_string = intent.getStringExtra("imagePath");
+        final String view_string = intent.getStringExtra("imagePath");
 
         //create media player
         final MediaPlayer mp = new MediaPlayer();
@@ -57,7 +57,9 @@ public class PlayPage extends AppCompatActivity {
         final Button propButton = (Button) findViewById(R.id.back_to_prop);
         propButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(PlayPage.this, PropertiesPage.class));
+                Intent toPropertiesPage = new Intent(PlayPage.this, PropertiesPage.class);
+                toPropertiesPage.putExtra("imagePath", view_string);
+                startActivity(toPropertiesPage);
             }
         });
 
