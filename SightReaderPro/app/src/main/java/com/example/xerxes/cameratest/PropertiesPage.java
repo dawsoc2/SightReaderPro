@@ -44,9 +44,14 @@ public class PropertiesPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_properties_page);
 
-        final String songVal = "S5_ S6_ S7_ S6_ E5_ ER_ S5_ S6_ S7_ S8_ E9_ ER_ S8_ S9_ S10_ S11_ E12_ ER_ S12_ S13_ S14_ S15_ E16_ ER_" +
-                               "ER_ E9_ E9_ E10_ E8_ ER_ Q8_ ER_ E11_ E8_ E9_ E7_ ER_ Q9_";
+        String arabesque = "Sn5_ Sn6_ Sn7_ Sn6_ En5_ EnR_ Sn5_ Sn6_ Sn7_ Sn8_ En9_ EnR_ Sn8_ Sn9_ Sn10_ Sn11_ En12_ EnR_ Sn12_ Sn13_ Sn14_ Sn15_ En16_ EnR_" +
+                               "EnR_ En9_ En9_ En10_ En8_ EnR_ Qn8_ EnR_ En11_ En8_ En9_ En7_ EnR_ Qn9_";
 
+        //http://assets.sheetmusicplus.com/product/Look-Inside/large/2878334_01.jpg
+        final String songVal = "Sn16_ Ss15_ Sn15_ Ss14_ Sn15_ Ss14_ Sn14_ Sn13_ Sn14_ Sn13_ Sf13_ Sn12_ Ss11_ Sn11_ Ss10_ Sn10_" +
+                               "Sn9_ Ss8_ Sn8_ Ss7_ Sn8_ Ss7_ Sn7_ Sn6_ Sn7_ Sn6_ Sf6_ Sn5_ Ss4_ Sn4_ Ss3_ Sn3_" +
+                               "Sn2_ S#1_ Sn1_ S#0_ Sn0_ Sn-1_ Sn2_ Ss1_ Sn1_ Ss0_ Sn1_ Ss0_ Sn0_ Sn-1_" +
+                               "Sn2_ Ss1_ Sn1_ Ss0_ Sn0_ Sn3_ Sn2_ Ss1_ Sn2_ Ss1_ Sn1_ Ss0_ Sn0_ Sn1_ Ss1_";
         //set variables
         ImageView photoDisplay = (ImageView)findViewById(R.id.prop_imageView);
         final MediaPlayer mp = new MediaPlayer();

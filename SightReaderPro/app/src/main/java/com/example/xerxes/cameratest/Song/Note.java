@@ -8,9 +8,9 @@ class Note {
 
 	
 	public Note(String note_properties) {
-		accidental = 'n';
 		note_type = note_properties.charAt(0);
-		String temp_position = note_properties.substring(1);
+		accidental = note_properties.charAt(1);
+		String temp_position = note_properties.substring(2);
 		if (temp_position.equals("R")){
 			staff_position = -20;
 		}else{
