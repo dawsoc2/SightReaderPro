@@ -8,6 +8,7 @@ public class Song {
 	private ArrayList<Note> notes;
 	private int tempo;
 	private char clef;
+	private int instrument;
 	
 	/**
 	The argument input is a String of the form "Q3_ Q2_ Q5_ Q8_ HR_ HR_ QR_ Q10_ Q11_ QR_" for example
@@ -43,7 +44,7 @@ public class Song {
 		}
     }
 
-	private int type_to_duration(char note_type) {
+	private int typeToDuration(char note_type) {
 		int duration;
         if (note_type == 'S') {
             duration = MidiFile.DEFAULT_RESOLUTION / 4;
@@ -66,24 +67,26 @@ public class Song {
 		return duration;
 	}
 
-	public void change_clef(char new_clef) {
+	public void changeClef(char new_clef) {
 		clef = new_clef;
 	}
 	
-	public void change_tempo(int new_tempo) {
+	public void changeTempo(int new_tempo) {
 		tempo = new_tempo;
 	}
 
+	public void changeInstrument(String inst) {instrument = instToInt(inst);}
+
     //adds accidental "acc" to every note that has the same base value as "val"
-    private void add_accidentals(int val, char acc) {
+    private void addAccidentals(int val, char acc) {
         for (int i = 0; i < notes.size(); i++) {
-            if (notes.get(i).note_value() % 7 == val) {
-                notes.get(i).add_accidental(acc);
+            if (notes.get(i).noteValue() % 7 == val) {
+                notes.get(i).addAccidental(acc);
             }
         }
     }
 
-    private int key_to_int (String key) {
+    private int keyToInt(String key) {
         switch(key) {
             case "C♭" :
                 return -7;
@@ -117,8 +120,32 @@ public class Song {
         return 0;
     }
 
+	int instToInt(String inp) {
+		switch(inp) {
+			case "D♭" :
+				return 1;
+			case "D" :
+				return 2;
+			case "E♭" :
+				return 3;
+			case "E" :
+				return 4;
+			case "F" :
+				return 5;
+			case "G" :
+				return 7;
+			case "A♭" :
+				return -3;
+			case "B♭" :
+				return -2;
+			case "B" :
+				return -1;
+		}
+		return 0;
+	}
+
     // has a whole bunch of key sig strings and does these.
-    public void change_key(String key) {
+    public void changeKey(String key) {
         //"C♯", "F♯", "B", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭" "G♭"
         //Sharps: F, C, G, D, A, E, B
         //Flats: B, E, A, D, G, C, F
@@ -133,23 +160,23 @@ public class Song {
         }
 
         //technically you could just iterate through one list backwards or forwards but I'm lazzzyy.
-        if (key_to_int(key) > 0) {          //sharp
-            for (int i = 0; i < key_to_int(key); i++) {
-                add_accidentals(sharps[i], 's');
+        if (keyToInt(key) > 0) {          //sharp
+            for (int i = 0; i < keyToInt(key); i++) {
+                addAccidentals(sharps[i], 's');
             }
         }
-        else if (key_to_int(key) < 0) {     //flats
-            for (int i = 0; i < -key_to_int(key); i++) {
-                add_accidentals(flats[i], 'f');
+        else if (keyToInt(key) < 0) {     //flats
+            for (int i = 0; i < -keyToInt(key); i++) {
+                addAccidentals(flats[i], 'f');
             }
         }
-        // shouldn't need to check for 0. key_to_int() can only return -6 through 6 so no error checking is necessary either
+        // shouldn't need to check for 0. keyToInt() can only return -6 through 6 so no error checking is necessary either
     }
 	
-	public MidiFile convert_to_midi() {
+	public MidiFile convertToMidi() {
 		//initialize some tracks
-		MidiTrack tempoTrack = new MidiTrack();
-		MidiTrack noteTrack = new MidiTrack();
+		MidiTrack tempo_track = new MidiTrack();
+		MidiTrack note_track = new MidiTrack();
 
 		//with time signature
 		TimeSignature ts = new TimeSignature();
@@ -160,23 +187,23 @@ public class Song {
 		midi_tempo.setBpm(tempo);
 
 		//insert these values
-		tempoTrack.insertEvent(ts);
-		tempoTrack.insertEvent(midi_tempo);
+		tempo_track.insertEvent(ts);
+		tempo_track.insertEvent(midi_tempo);
 
 		//keep track of the tick and start adding notes.
 		final int NOTE_COUNT = notes.size();
 		long tick = 0;
 		for (int i = 0; i < NOTE_COUNT; i++) {
-			char note_type = notes.get(i).note_type();
+			char note_type = notes.get(i).noteType();
 
-			long duration = type_to_duration(note_type);
-			int pitch = notes.get(i).staff_to_value(clef);
+			long duration = typeToDuration(note_type);
+			int pitch = notes.get(i).staffToValue(clef) + instrument;
 			// only actually play a note if there's a value
 			//right now the note just plays for its full duration (probably not very natural-sounding)
 			if (pitch != -20) {
 				int channel = 0;
 				int velocity = 100;
-				noteTrack.insertNote(channel, pitch, velocity, tick, duration);
+				note_track.insertNote(channel, pitch, velocity, tick, duration);
 			}
 			//always increment the tick so we don't overlap notes
 			tick = tick + duration;
@@ -184,8 +211,8 @@ public class Song {
 
 		//have to add the tracks to a list to create the MidiFile
 		ArrayList<MidiTrack> tracks = new ArrayList<MidiTrack>();
-		tracks.add(tempoTrack);
-		tracks.add(noteTrack);
+		tracks.add(tempo_track);
+		tracks.add(note_track);
 
 
 

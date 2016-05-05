@@ -2,12 +2,9 @@ package com.example.xerxes.cameratest;
 
 //android imports
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,19 +18,15 @@ import android.text.InputFilter;
 //java imports
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 
 //android-midi imports
 import com.leff.midi.*;
-import com.leff.midi.util.*;
-import com.leff.midi.event.*;
-import com.leff.midi.event.meta.*;
 
 //song imports
 import com.example.xerxes.cameratest.Song.*;
 
 //misc. imports
-import com.example.xerxes.cameratest.InputFilterMinMax;
+
 
 public class PropertiesPage extends AppCompatActivity {
 
@@ -50,7 +43,7 @@ public class PropertiesPage extends AppCompatActivity {
         //http://assets.sheetmusicplus.com/product/Look-Inside/large/2878334_01.jpg
         final String songVal = "Sn16_ Ss15_ Sn15_ Ss14_ Sn15_ Ss14_ Sn14_ Sn13_ Sn14_ Sn13_ Sf13_ Sn12_ Ss11_ Sn11_ Ss10_ Sn10_" +
                                "Sn9_ Ss8_ Sn8_ Ss7_ Sn8_ Ss7_ Sn7_ Sn6_ Sn7_ Sn6_ Sf6_ Sn5_ Ss4_ Sn4_ Ss3_ Sn3_" +
-                               "Sn2_ S#1_ Sn1_ S#0_ Sn0_ Sn-1_ Sn2_ Ss1_ Sn1_ Ss0_ Sn1_ Ss0_ Sn0_ Sn-1_" +
+                               "Sn2_ Ss1_ Sn1_ S#0_ Sn0_ Sn-1_ Sn2_ Ss1_ Sn1_ Ss0_ Sn1_ Ss0_ Sn0_ Sn-1_" +
                                "Sn2_ Ss1_ Sn1_ Ss0_ Sn0_ Sn3_ Sn2_ Ss1_ Sn2_ Ss1_ Sn1_ Ss0_ Sn0_ Sn1_ Ss1_";
         //set variables
         ImageView photoDisplay = (ImageView)findViewById(R.id.prop_imageView);
@@ -88,7 +81,7 @@ public class PropertiesPage extends AppCompatActivity {
         spinnerKeySig.setSelection(keySigSpinnerPosition);
 
         //create instrument key spinner
-        String instKeyArray[] = {"B/C♭", "E", "A", "D", "G", "C", "F", "B♭", "E♭", "A♭", "D♭/C♯", "G♭/F♯"};
+        String instKeyArray[] = {"A♭", "B♭", "B", "C", "D♭", "D", "E♭", "E", "F", "G"};
         final Spinner spinnerInst = (Spinner) findViewById(R.id.spinnerInstrument);
         ArrayAdapter<String> instKeySpinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, instKeyArray);
         instKeySpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
@@ -121,13 +114,14 @@ public class PropertiesPage extends AppCompatActivity {
 
                 //now create a Song object
                 Song user_song = new Song(songVal);
-                user_song.change_tempo(text_tempo);
-                user_song.change_clef(clefVal);
-                user_song.change_key(keyVal);
+                user_song.changeTempo(text_tempo);
+                user_song.changeClef(clefVal);
+                user_song.changeInstrument(instVal);
+                user_song.changeKey(keyVal);
 
                 //force that object into providing a MidiFile for us.
 
-                MidiFile midi = user_song.convert_to_midi();
+                MidiFile midi = user_song.convertToMidi();
 
                 // Write the MIDI data to a file
                 File output = new File("sdcard/SightReaderPro_song.mid");
