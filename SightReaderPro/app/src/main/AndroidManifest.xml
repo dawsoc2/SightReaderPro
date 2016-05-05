@@ -24,8 +24,8 @@
         <activity android:name=".PropertiesPage" />
         <activity
             android:name=".PlayPage"
-            android:label="@string/title_activity_play_page"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

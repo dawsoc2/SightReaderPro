@@ -67,4 +67,5 @@
         android:id="@+id/pause_btn"
         android:layout_alignTop="@+id/play_btn"
         android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
