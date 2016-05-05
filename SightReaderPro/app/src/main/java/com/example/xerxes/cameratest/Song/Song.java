@@ -9,6 +9,7 @@ public class Song {
 	private int tempo;
 	private char clef;
 	private int instrument;
+	private int octave;
 	
 	/**
 	The argument input is a String of the form "Q3_ Q2_ Q5_ Q8_ HR_ HR_ QR_ Q10_ Q11_ QR_" for example
@@ -20,6 +21,8 @@ public class Song {
         notes = new ArrayList<Note>();							
 		tempo = 100;											//default tempo will be 100 bpm
 		clef = 'T';												//default clef is T for treble
+		instrument = 0;											//default instrument of C
+		octave = 0;												//default octave of no transposition
 		char[] valid_values = {'S', 'E', 'Q', 'H', 'W'};
 
 		Note temp;											//to store length of each note temporarily for the song
@@ -73,6 +76,10 @@ public class Song {
 	
 	public void changeTempo(int new_tempo) {
 		tempo = new_tempo;
+	}
+
+	public void changeOctave(int new_octave) {
+		octave = new_octave;
 	}
 
 	public void changeInstrument(String inst) {instrument = instToInt(inst);}
@@ -197,7 +204,7 @@ public class Song {
 			char note_type = notes.get(i).noteType();
 
 			long duration = typeToDuration(note_type);
-			int pitch = notes.get(i).staffToValue(clef) + instrument;
+			int pitch = notes.get(i).staffToValue(clef) + instrument + 12*octave;
 			// only actually play a note if there's a value
 			//right now the note just plays for its full duration (probably not very natural-sounding)
 			if (pitch != -20) {

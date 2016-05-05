@@ -120,4 +120,22 @@
         android:layout_toEndOf="@+id/spinnerInstrument"
         android:hint="1 - 1000" />
 
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerOctave"
+        android:layout_below="@+id/OctaveText"
+        android:layout_toRightOf="@+id/processButton"
+        android:layout_alignRight="@+id/KeySigText"
+        android:layout_alignEnd="@+id/KeySigText" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Octave"
+        android:id="@+id/OctaveText"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@+id/editTempo"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

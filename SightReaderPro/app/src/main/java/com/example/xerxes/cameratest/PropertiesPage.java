@@ -89,6 +89,15 @@ public class PropertiesPage extends AppCompatActivity {
         int instKeySpinnerPosition = instKeySpinnerArrayAdapter.getPosition("C");
         spinnerInst.setSelection(instKeySpinnerPosition);
 
+        //create Octave spinner
+        String octaveArray[] = {"-3", "-2", "-1", "0", "+1", "+2", "-3"};
+        final Spinner spinnerOctave = (Spinner) findViewById(R.id.spinnerOctave);
+        ArrayAdapter<String> octaveSpinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, octaveArray);
+        octaveSpinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
+        spinnerOctave.setAdapter(octaveSpinnerArrayAdapter);
+        int octaveSpinnerPosition = octaveSpinnerArrayAdapter.getPosition("0");
+        spinnerOctave.setSelection(octaveSpinnerPosition);
+
         //create tempo text box
         final EditText tempoEditText = (EditText)findViewById(R.id.editTempo);
         tempoEditText.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "1000")});
@@ -98,16 +107,17 @@ public class PropertiesPage extends AppCompatActivity {
         final Button procButton = (Button) findViewById(R.id.processButton);
         procButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String tempClefVal = spinnerClef.getSelectedItem().toString();
-                char clefVal;
-                String keyVal = spinnerKeySig.getSelectedItem().toString();
-                String instVal = spinnerInst.getSelectedItem().toString();
+                String temp_clef_val = spinnerClef.getSelectedItem().toString();
+                char clef_val;
+                String key_val = spinnerKeySig.getSelectedItem().toString();
+                String inst_val = spinnerInst.getSelectedItem().toString();
+                int octave_val = Integer.parseInt(spinnerOctave.getSelectedItem().toString());
                 int text_tempo = Integer.parseInt(tempoEditText.getText().toString());
 
-                if (tempClefVal == "Treble") {
-                    clefVal = 'T';
+                if (temp_clef_val == "Treble") {
+                    clef_val = 'T';
                 } else {
-                    clefVal = 'B';
+                    clef_val = 'B';
                 }
 
                 //let's actually take that tempo and song and create a test midi file
@@ -115,9 +125,10 @@ public class PropertiesPage extends AppCompatActivity {
                 //now create a Song object
                 Song user_song = new Song(songVal);
                 user_song.changeTempo(text_tempo);
-                user_song.changeClef(clefVal);
-                user_song.changeInstrument(instVal);
-                user_song.changeKey(keyVal);
+                user_song.changeClef(clef_val);
+                user_song.changeInstrument(inst_val);
+                user_song.changeKey(key_val);
+                user_song.changeOctave(octave_val);
 
                 //force that object into providing a MidiFile for us.
 
