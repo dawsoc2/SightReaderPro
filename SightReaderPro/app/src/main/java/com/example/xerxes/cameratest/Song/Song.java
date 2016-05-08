@@ -43,7 +43,7 @@ public class Song {
 		}
     }
 
-	private int type_to_duration(char note_type) {
+	private int typeToDuration(char note_type) {
 		int duration;
 		if (note_type == 'Q') {
 			duration = MidiFile.DEFAULT_RESOLUTION;
@@ -60,16 +60,16 @@ public class Song {
 		return duration;
 	}
 
-	public void change_clef(char new_clef) {
+	public void changeClef(char new_clef) {
 		clef = new_clef;
 	}
 	
-	public void change_tempo(int new_tempo) {
+	public void changeTempo(int new_tempo) {
 		tempo = new_tempo;
 	}
 
 	
-	public MidiFile convert_to_midi() {
+	public MidiFile convertToMidi() {
 		//initialize some tracks
 		MidiTrack tempoTrack = new MidiTrack();
 		MidiTrack noteTrack = new MidiTrack();
@@ -92,8 +92,8 @@ public class Song {
 		for (int i = 0; i < NOTE_COUNT; i++) {
 			char note_type = notes.get(i).note_type();
 
-			long duration = type_to_duration(note_type);
-			int pitch = notes.get(i).staff_to_value(clef);
+			long duration = typeToDuration(note_type);
+			int pitch = notes.get(i).staffToValue(clef);
 			// only actually play a note if there's a value
 			//right now the note just plays for its full duration (probably not very natural-sounding)
 			if (pitch != -20) {

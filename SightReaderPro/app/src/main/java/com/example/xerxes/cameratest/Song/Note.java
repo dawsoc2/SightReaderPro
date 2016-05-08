@@ -15,11 +15,11 @@ class Note {
 		}
 	}
 
-	//note_type() and staff_to_value(char) are public now because the note class can't
+	//note_type() and staffToValue(char) are public now because the note class can't
 	//actually do any of the midi creation :(. Or at least it would be very very difficult
 	public char note_type() { return note_type; }
 
-	public int staff_to_value(char clef)	{
+	public int staffToValue(char clef)	{
 		if (clef == 'T') {
 			int[] tclef =  {24,26,28,29,31,33,35,
 					36,38,40,41,43,45,47,

@@ -110,7 +110,7 @@ public class PropertiesPage extends AppCompatActivity {
 
                 //blob the bitmap
                 BlobCut blobber = new BlobCut();
-                Bitmap blobbed_bitmap = blobber.blob_cut(bitmap);
+                Bitmap blobbed_bitmap = blobber.blobCut(bitmap);
 
                 String TAG = "SightReaderPro";
                 String[] paths = new String[]{DATA_PATH, DATA_PATH + "tessdata/"};
@@ -174,13 +174,13 @@ public class PropertiesPage extends AppCompatActivity {
 
                 //generate a new song
                 Song image_song = new Song(recognized_text);
-                image_song.change_tempo(text_tempo);                //set tempo, pretty standard
+                image_song.changeTempo(text_tempo);                //set tempo, pretty standard
 
                 Log.v(TAG, "STRING: '" + recognized_text + "'\n");
                 song_edit_text.setText(recognized_text.replaceAll("\\s", ""));
 
                 //force the song to give us a midi file
-                MidiFile midi = image_song.convert_to_midi();
+                MidiFile midi = image_song.convertToMidi();
 
                 ///write that midi file to the sdcard (this will not work on all phones but it works on mine!
                 File output = new File("sdcard/SightReaderPro_song.mid");

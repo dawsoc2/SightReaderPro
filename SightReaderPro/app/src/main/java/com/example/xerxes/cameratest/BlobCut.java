@@ -9,21 +9,21 @@ import android.graphics.Bitmap;
 class BlobCut {
         public BlobCut(){}
 		
-        private void get_RGB(int pixel, int[] RGB) {
+        private void getRGB(int pixel, int[] RGB) {
 				// Takes ARGB_8888 pixel values, puts separate RGB values into RGB[]
                 RGB[0] = (pixel & 0x00ff0000) >> 16;
                 RGB[1] = (pixel & 0x0000ff00) >> 8;
                 RGB[2] = (pixel & 0x000000ff);
         }
 
-        private int get_grey(int pix) {
+        private int getGrey(int pix) {
 				// Takes ARGB_8888 pixel value, returns 0 <= value <= 255
                 int[] RGB = new int[3];
-                get_RGB(pix, RGB);
+                getRGB(pix, RGB);
                 return (RGB[0] + RGB[1] + RGB[2]) / 3;
         }
 
-        private int put_grey(int val) {
+        private int putGrey(int val) {
 				// Takes int greyscale 0 <= value <= 255, returns ARGB_8888 pixel value
                 int t_val = val;
                 if (val < 0) {t_val = 0;}
@@ -35,7 +35,7 @@ class BlobCut {
         }
 		
 		
-		private void column_filter_image(int[] image, int im_height, int im_width, int[] filter, int f_size, int[] out) {
+		private void columnFilterImage(int[] image, int im_height, int im_width, int[] filter, int f_size, int[] out) {
 				int f_sum = 0;
                 int p_sum;
                 int p_val;
@@ -54,14 +54,14 @@ class BlobCut {
 										} else {
 												p_val = image[(row-edge+i)*im_width + col];
 										}
-										p_sum += get_grey(p_val) * filter[i];
+										p_sum += getGrey(p_val) * filter[i];
 								}
-								out[row*im_width + col] = put_grey(p_sum/f_sum);
+								out[row*im_width + col] = putGrey(p_sum / f_sum);
 						}
 				}
 		}
 				
-        private void filter_image(int[] image, int im_height, int im_width, int[] filter, int f_size, int[] out) {
+        private void filterImage(int[] image, int im_height, int im_width, int[] filter, int f_size, int[] out) {
 				// Applies filter to image data, puts filtered image data to out[]
                 int f_sum = 0;
                 int p_sum;
@@ -84,20 +84,20 @@ class BlobCut {
                                                 } else {
                                                         p_val = image[(row-edge+i)*im_width + (col-edge+j)];
                                                 }
-                                                p_sum += get_grey(p_val) * filter[i*f_size + j];
+                                                p_sum += getGrey(p_val) * filter[i*f_size + j];
                                         }
                                 }
-                                out[row*im_width + col] = put_grey(p_sum/f_sum);
+                                out[row*im_width + col] = putGrey(p_sum / f_sum);
                         }
                 }
         }
 
-        private void white_mask(int[] src, int im_height, int im_width, int[] mask, int[] dest) {
+        private void whiteMask(int[] src, int im_height, int im_width, int[] mask, int[] dest) {
 				// Takes source image data and black/white mask, puts max(source,mask) value to dest
 				// Dest contains source image data where mask is black, white where mask is white
                 for (int row = 0; row < im_height; row++) {
                         for (int col = 0; col < im_width; col++) {
-                                if (get_grey(src[row*im_width + col]) > get_grey(mask[row*im_width + col])) {
+                                if (getGrey(src[row * im_width + col]) > getGrey(mask[row * im_width + col])) {
                                         dest[row*im_width + col] = src[row*im_width + col];
                                 } else {
                                         dest[row*im_width + col] = mask[row*im_width + col];
@@ -106,12 +106,12 @@ class BlobCut {
                 }
         }
 
-        private void convert_bw(int[] image, int[] out, int split) {
+        private void convertBw(int[] image, int[] out, int split) {
 				// Takes image data, returns black/white image data
 				// Optional parameter 0 < split < 255 threshold value
                 int greyval;
                 for (int i = 0; i<image.length; i++) {
-                        greyval = get_grey(image[i]);
+                        greyval = getGrey(image[i]);
                         if (greyval >= split) {
                                 out[i] = 0xffffffff;
                         }
@@ -121,12 +121,12 @@ class BlobCut {
                 }
         }
 
-        private void convert_bw(int[] image, int[] out) {
-				// Runs convert_bw with default split parameter
-                convert_bw(image, out, 128);
+        private void convertBw(int[] image, int[] out) {
+				// Runs convertBw with default split parameter
+                convertBw(image, out, 128);
         }
 
-        public Bitmap blob_cut(Bitmap input_image) {
+        public Bitmap blobCut(Bitmap input_image) {
 				// Takes input bitmap image, returns image with blobs separated
                 int[] input_data;
                 int[] temp1;
@@ -157,20 +157,20 @@ class BlobCut {
                 input_image.getPixels(input_data, 0, im_width, 0, 0, im_width, im_height);
 
                 temp1 = new int[im_height * im_width];
-                convert_bw(input_data, temp1);
+                convertBw(input_data, temp1);
 
                 temp2 = new int[im_height * im_width];
 				
                 for(int i = 0; i < 10; i++) {
-                        column_filter_image(temp1, im_height, im_width, col_filter, f_size, temp2);
-                        column_filter_image(temp2, im_height, im_width, col_filter, f_size, temp1);
+                        columnFilterImage(temp1, im_height, im_width, col_filter, f_size, temp2);
+                        columnFilterImage(temp2, im_height, im_width, col_filter, f_size, temp1);
                 }
                 
-                //filter_image(temp1, im_height, im_width, filter, f_size, temp2);
-				column_filter_image(temp1, im_height, im_width, col_filter, f_size, temp2);
+                //filterImage(temp1, im_height, im_width, filter, f_size, temp2);
+				columnFilterImage(temp1, im_height, im_width, col_filter, f_size, temp2);
 
-                convert_bw(temp2, temp1, 192);
-                white_mask(input_data, im_height, im_width, temp1, temp2);
+                convertBw(temp2, temp1, 192);
+                whiteMask(input_data, im_height, im_width, temp1, temp2);
 
                 return Bitmap.createBitmap(temp2, im_width, im_height, Bitmap.Config.valueOf("ARGB_8888"));
         }
